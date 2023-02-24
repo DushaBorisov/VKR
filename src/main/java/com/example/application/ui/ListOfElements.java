@@ -18,8 +18,10 @@ import com.vaadin.flow.router.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.security.PermitAll;
 import java.util.List;
 
+@PermitAll
 @RequiredArgsConstructor
 @Route(value = "", layout = MainLayout.class)
 public class ListOfElements extends Div implements AfterNavigationObserver {

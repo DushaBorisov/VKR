@@ -10,8 +10,10 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.security.PermitAll;
 import java.util.Optional;
 
+@PermitAll
 @Route(value = "element", layout = MainLayout.class)
 public class ElementView extends VerticalLayout implements HasUrlParameter<Integer> {
 

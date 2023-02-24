@@ -1,18 +1,25 @@
-package com.example.application.backend;
+package com.example.application.backend.entities;
 
-public class Person {
+public class Job {
 
+    private Integer id;
     private String title;
     private String description;
     private String filteringWord;
 
-    public Person() {
-    }
-
-    public Person(String title, String description, String filteringWord) {
+    public Job(String title, String description, String filteringWord, Integer id) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.filteringWord = filteringWord;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitle() {

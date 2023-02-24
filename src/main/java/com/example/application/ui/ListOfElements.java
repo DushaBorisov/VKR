@@ -1,7 +1,6 @@
 package com.example.application.ui;
 
-import com.example.application.backend.Job;
-import com.example.application.backend.Person;
+import com.example.application.backend.entities.Job;
 import com.example.application.backend.service.JobService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -19,30 +18,30 @@ import com.vaadin.flow.router.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Route(value = "listElem", layout = MainLayout.class)
+@Route(value = "", layout = MainLayout.class)
 public class ListOfElements extends Div implements AfterNavigationObserver {
 
     private JobService jobService;
 
-    Grid<Person> grid = new Grid<>();
+    Grid<Job> grid = new Grid<>();
     TextField filterText = new TextField();
 
     @Autowired
     public ListOfElements(JobService jobService) {
+
         this.jobService = jobService;
 
         addClassName("card-list-view");
         setSizeFull();
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(job -> createCard(job));
-        add(getToolbar(),grid);
+        add(getToolbar(), grid);
     }
 
-    private HorizontalLayout createCard(Person job) {
+    private HorizontalLayout createCard(Job job) {
         HorizontalLayout card = new HorizontalLayout();
         card.addClassName("card");
         card.setSpacing(false);
@@ -70,7 +69,7 @@ public class ListOfElements extends Div implements AfterNavigationObserver {
         button.addClickListener(clickEvent ->
         {
             button.getUI().ifPresent(ui ->
-                    ui.navigate("element"));
+                    ui.navigate(ElementView.class, job.getId()));
         });
 
         description.add(header, post, button);
@@ -82,13 +81,13 @@ public class ListOfElements extends Div implements AfterNavigationObserver {
     }
 
     private Component getToolbar() {
-        filterText.setPlaceholder("Filter by name");
+        filterText.setPlaceholder("Поск по названию");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
 
         filterText.addValueChangeListener(e -> updateList());
 
-        Button addContactButton = new Button("Add contact");
+        Button addContactButton = new Button("Поиск");
 
 
         HorizontalLayout toolBar = new HorizontalLayout(filterText, addContactButton);
@@ -102,119 +101,8 @@ public class ListOfElements extends Div implements AfterNavigationObserver {
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-
-        List<Person> jobList = jobService.getAllJobs();
-
-//        // Set some data when this view is displayed.
-        List<Person> persons = Arrays.asList( //
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20"),
-                createPerson("https://randomuser.me/api/portraits/men/42.jpg", "John Smith", "May 8",
-                        "In publishing and graphic design, ",
-                        "1K", "500", "20")
-
-        );
-
+        List<Job> jobList = jobService.getAllJobs();
         grid.setItems(jobList);
     }
 
-    private static Person createPerson(String image, String name, String date, String post, String likes,
-                                       String comments, String shares) {
-        Person p = new Person();
-
-        return p;
-    }
 }

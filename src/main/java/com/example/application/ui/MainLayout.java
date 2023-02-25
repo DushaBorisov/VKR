@@ -1,5 +1,6 @@
 package com.example.application.ui;
 
+import com.example.application.backend.entities.enums.AuthRoles;
 import com.example.application.security.SecurityService;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -10,11 +11,18 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class MainLayout extends AppLayout {
 
     private SecurityService securityService;
 
+    @Autowired
     public MainLayout(SecurityService securityService) {
         this.securityService = securityService;
         createHeader();
@@ -24,11 +32,22 @@ public class MainLayout extends AppLayout {
 
     private void createDrawer() {
         RouterLink elements = new RouterLink("ListOfElements", ListOfElements.class);
-        elements.setHighlightCondition(HighlightConditions.sameLocation());
-        addToDrawer(new VerticalLayout(
-                elements
+        RouterLink userPage = new RouterLink("User page", StudentPage.class);
+        RouterLink companyPage = new RouterLink("Company page", CompanyPage.class);
 
-        ));
+        VerticalLayout listOfPages = new VerticalLayout();
+
+        listOfPages.add(elements);
+
+        UserDetails userDetails = securityService.getAuthenticatedUser();
+        Collection<SimpleGrantedAuthority> list = (Collection<SimpleGrantedAuthority>) userDetails.getAuthorities();
+        if(list.stream().map(auth -> auth.getAuthority()).collect(Collectors.toSet()).contains(AuthRoles.ROLE_USER.getRoleName())){
+            listOfPages.add(userPage);
+
+        }else listOfPages.add(companyPage);
+
+        elements.setHighlightCondition(HighlightConditions.sameLocation());
+        addToDrawer(listOfPages);
     }
 
     private void createHeader() {

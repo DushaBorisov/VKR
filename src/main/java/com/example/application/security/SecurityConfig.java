@@ -21,13 +21,37 @@ public class SecurityConfig extends VaadinWebSecurity {
     private static class SimpleInMemoryUserDetailsManager extends InMemoryUserDetailsManager {
 
         public SimpleInMemoryUserDetailsManager() {
-            createUser(new User("user",
+            createUser(new User("user_name_1",
                     "{noop}userpass",
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
             ));
-            createUser(new User("admin",
-                    "{noop}userpass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))
+            createUser(new User("company_user_name_1",
+                    "{noop}pass",
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+            ));
+            createUser(new User("company_user_name_2",
+                    "{noop}pass",
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+            ));
+            createUser(new User("company_user_name_3",
+                    "{noop}pass",
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+            ));
+            createUser(new User("company_user_name_4",
+                    "{noop}pass",
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+            ));
+            createUser(new User("company_user_name_5",
+                    "{noop}pass",
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+            ));
+            createUser(new User("company_user_name_6",
+                    "{noop}pass",
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+            ));
+            createUser(new User("company_user_name_7",
+                    "{noop}pass",
+                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
             ));
         }
     }

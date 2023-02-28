@@ -1,5 +1,6 @@
 package com.example.application.security;
 
+import com.example.application.backend.service.UserService;
 import com.example.application.ui.LoginView;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import com.vaadin.flow.spring.security.VaadinWebSecurityConfigurerAdapter;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import java.util.Collections;
@@ -18,43 +20,43 @@ import java.util.Collections;
 @Configuration
 public class SecurityConfig extends VaadinWebSecurity {
 
-    private static class SimpleInMemoryUserDetailsManager extends InMemoryUserDetailsManager {
-
-        public SimpleInMemoryUserDetailsManager() {
-            createUser(new User("user_name_1",
-                    "{noop}userpass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
-            ));
-            createUser(new User("company_user_name_1",
-                    "{noop}pass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
-            ));
-            createUser(new User("company_user_name_2",
-                    "{noop}pass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
-            ));
-            createUser(new User("company_user_name_3",
-                    "{noop}pass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
-            ));
-            createUser(new User("company_user_name_4",
-                    "{noop}pass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
-            ));
-            createUser(new User("company_user_name_5",
-                    "{noop}pass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
-            ));
-            createUser(new User("company_user_name_6",
-                    "{noop}pass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
-            ));
-            createUser(new User("company_user_name_7",
-                    "{noop}pass",
-                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
-            ));
-        }
-    }
+//    private static class SimpleInMemoryUserDetailsManager extends InMemoryUserDetailsManager {
+//
+//        public SimpleInMemoryUserDetailsManager() {
+//            createUser(new User("user_name_1",
+//                    "{noop}userpass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
+//            ));
+//            createUser(new User("company_user_name_1",
+//                    "{noop}pass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+//            ));
+//            createUser(new User("company_user_name_2",
+//                    "{noop}pass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+//            ));
+//            createUser(new User("company_user_name_3",
+//                    "{noop}pass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+//            ));
+//            createUser(new User("company_user_name_4",
+//                    "{noop}pass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+//            ));
+//            createUser(new User("company_user_name_5",
+//                    "{noop}pass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+//            ));
+//            createUser(new User("company_user_name_6",
+//                    "{noop}pass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+//            ));
+//            createUser(new User("company_user_name_7",
+//                    "{noop}pass",
+//                    Collections.singleton(new SimpleGrantedAuthority("ROLE_COMPANY"))
+//            ));
+//        }
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -66,7 +68,13 @@ public class SecurityConfig extends VaadinWebSecurity {
     }
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        return new SimpleInMemoryUserDetailsManager();
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+
+
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailsService() {
+//        return new SimpleInMemoryUserDetailsManager();
+//    }
 }

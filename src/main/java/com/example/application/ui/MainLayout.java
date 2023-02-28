@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -40,8 +41,8 @@ public class MainLayout extends AppLayout {
         listOfPages.add(elements);
 
         UserDetails userDetails = securityService.getAuthenticatedUser();
-        Collection<SimpleGrantedAuthority> list = (Collection<SimpleGrantedAuthority>) userDetails.getAuthorities();
-        if(list.stream().map(auth -> auth.getAuthority()).collect(Collectors.toSet()).contains(AuthRoles.ROLE_USER.getRoleName())){
+        Collection<GrantedAuthority> list = (Collection<GrantedAuthority>) userDetails.getAuthorities();
+        if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_USER.getRoleName())){
             listOfPages.add(userPage);
 
         }else listOfPages.add(companyPage);

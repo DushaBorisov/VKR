@@ -32,9 +32,9 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink elements = new RouterLink("ListOfElements", ListOfElements.class);
-        RouterLink userPage = new RouterLink("User page", StudentPage.class);
-        RouterLink companyPage = new RouterLink("Company page", CompanyPage.class);
+        RouterLink elements = new RouterLink("Список вакансий", ListOfElements.class);
+        RouterLink userPage = new RouterLink("Страница студента", StudentPage.class);
+        RouterLink companyPage = new RouterLink("Страница компании", CompanyPage.class);
 
         VerticalLayout listOfPages = new VerticalLayout();
 
@@ -42,17 +42,24 @@ public class MainLayout extends AppLayout {
 
         UserDetails userDetails = securityService.getAuthenticatedUser();
         Collection<GrantedAuthority> list = (Collection<GrantedAuthority>) userDetails.getAuthorities();
+        // if role = USER
         if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_USER.getRoleName())){
             listOfPages.add(userPage);
-
-        }else listOfPages.add(companyPage);
+        }
+        // if role = COMPANY
+        if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_COMPANY.getRoleName())){
+            listOfPages.add(companyPage);
+        }
+        // if role = ADMIN
+        if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_ADMIN.getRoleName())){
+        }
 
         elements.setHighlightCondition(HighlightConditions.sameLocation());
         addToDrawer(listOfPages);
     }
 
     private void createHeader() {
-        H1 logo = new H1("Students work");
+        H1 logo = new H1("Вакансии МГТУ");
         logo.addClassNames("text-l", "m-m");
 
         Button logoutButton = new Button("Log out", e -> securityService.logout());

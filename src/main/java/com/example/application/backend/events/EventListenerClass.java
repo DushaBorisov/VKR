@@ -16,12 +16,28 @@ public class EventListenerClass {
     @EventListener(ApplicationReadyEvent.class)
     void afterStartUpLogic() {
         createTestUser();
+        createTestCompany();
+        createTestAdmin();
     }
 
     private void createTestUser() {
         User user = new User();
         user.setUsername("andrey_user");
         user.setPassword("password");
-        userService.saveUser(user);
+        userService.saveStudent(user);
+    }
+
+    private void createTestCompany() {
+        User user = new User();
+        user.setUsername("test_company");
+        user.setPassword("password");
+        userService.saveCompany(user);
+    }
+
+    private void createTestAdmin() {
+        User user = new User();
+        user.setUsername("test_admin");
+        user.setPassword("password");
+        userService.saveAdmin(user);
     }
 }

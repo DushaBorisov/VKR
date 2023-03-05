@@ -3,6 +3,8 @@ package com.example.application.ui;
 import com.example.application.backend.entities.Company;
 import com.example.application.backend.service.CompanyService;
 import com.example.application.security.SecurityService;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
@@ -25,6 +27,7 @@ public class CompanyPage extends VerticalLayout {
     private H2 title;
     private Paragraph description;
     private Label error;
+    private Button editButton;
 
 
     @Autowired
@@ -46,11 +49,15 @@ public class CompanyPage extends VerticalLayout {
         title = new H2(company.getCompanyName());
         title.addClassNames(LumoUtility.Margin.Bottom.NONE, LumoUtility.Margin.Top.SMALL, LumoUtility.FontSize.XXXLARGE);
         description = new Paragraph(company.getDescription());
+        description.getStyle().set("white-space", "pre-line");
         description.addClassNames(LumoUtility.Margin.Bottom.SMALL, LumoUtility.Margin.Top.NONE, LumoUtility.TextColor.SECONDARY);
+
+        editButton = new Button("Редактировать данные");
+        editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         container.add(title, description);
 
-        add(container);
+        add(container, editButton);
 
     }
 

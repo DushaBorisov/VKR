@@ -16,7 +16,13 @@ public class CompanyService {
 
     @PostConstruct
     void initData() {
-        companyList.add(new Company("company_user_name_1", 1L, "Company1", "IT company", "89654333566", "company1@gmail.com", List.of("IT")));
+        companyList.add(new Company("test_company", 1L, "ООО Айтико", "Компания ITco (Айтико) специализируется в области IT-решений в сфере здравоохранения.\n" +
+                "\n" +
+                "Мы обладаем уникальным целостным подходом, что позволяет разрабатывать удачные технологии для больниц и полностью интегрированные решения в масштабе всего лечебного учреждения. Эти специализированные решения предназначены для интеграции IT-систем и средств обработки данных в радиологии, кардиологии, маммографии и ортопедии.\n" +
+                "\n" +
+                "Нашими клиентами являются крупнейшие частные и государственные медицинские учреждения на территории России, ряда стран СНГ и Юго-Восточной Европы.\n" +
+                "\n" +
+                "Компания является авторизованным бизнес-партнером компании Agfa HealthCare (Бельгия) - одного из лидирующих на мировом рынке производителей программного обеспечения в сфере решений PACS систем и решений для обработки медицинских диагностических изображений.", "89654333566", "company1@gmail.com", List.of("IT")));
         companyList.add(new Company("company_user_name_2", 2L, "Company2", "Research company", "89654333566", "company1@gmail.com", List.of("Research")));
         companyList.add(new Company("company_user_name_3", 3L, "Company3", "Marketing company", "89654333566", "company1@gmail.com", List.of("Marketing")));
         companyList.add(new Company("company_user_name_4", 4L, "Company4", "Market place company", "89654333566", "company1@gmail.com", List.of("Market")));

@@ -1,6 +1,6 @@
 package com.example.application.ui;
 
-import com.example.application.backend.entities.Job;
+import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.service.JobService;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @PermitAll
 @Route(value = "element", layout = MainLayout.class)
-public class ElementView extends VerticalLayout implements HasUrlParameter<Integer> {
+public class ElementView extends VerticalLayout implements HasUrlParameter<Long> {
 
 
     private Text title;
@@ -23,7 +23,7 @@ public class ElementView extends VerticalLayout implements HasUrlParameter<Integ
 
     private JobService jobService;
 
-    private Integer jobId;
+    private Long jobId;
 
     @Autowired
     public ElementView(JobService jobService) {
@@ -41,7 +41,7 @@ public class ElementView extends VerticalLayout implements HasUrlParameter<Integ
         button.addClickListener(clickEvent ->
         {
             button.getUI().ifPresent(ui ->
-                    ui.navigate(ListOfElements.class));
+                    ui.navigate(ListOfJobs.class));
         });
 
         add(
@@ -52,14 +52,14 @@ public class ElementView extends VerticalLayout implements HasUrlParameter<Integ
     }
 
     @Override
-    public void setParameter(BeforeEvent beforeEvent, Integer s) {
+    public void setParameter(BeforeEvent beforeEvent, Long s) {
         this.jobId = s;
         createView(s);
     }
 
-    private void createView(Integer jobId) {
+    private void createView(Long jobId) {
         Optional<Job> jobOp = jobService.getAllJobs().stream()
-                .filter(el -> el.getId().equals(jobId))
+                .filter(el -> el.getJobId().equals(jobId))
                 .findFirst();
 
         if (jobOp.isEmpty()) {

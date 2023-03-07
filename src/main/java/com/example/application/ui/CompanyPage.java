@@ -1,6 +1,6 @@
 package com.example.application.ui;
 
-import com.example.application.backend.entities.Company;
+import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.service.CompanyService;
 import com.example.application.security.SecurityService;
 import com.vaadin.flow.component.button.Button;
@@ -46,7 +46,7 @@ public class CompanyPage extends VerticalLayout {
 
     private void drawCompanyInfo(Company company) {
         VerticalLayout container = new VerticalLayout();
-        title = new H2(company.getCompanyName());
+        title = new H2(company.getName());
         title.addClassNames(LumoUtility.Margin.Bottom.NONE, LumoUtility.Margin.Top.SMALL, LumoUtility.FontSize.XXXLARGE);
         description = new Paragraph(company.getDescription());
         description.getStyle().set("white-space", "pre-line");

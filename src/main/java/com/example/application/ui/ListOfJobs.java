@@ -1,6 +1,6 @@
 package com.example.application.ui;
 
-import com.example.application.backend.entities.Job;
+import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.service.JobService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -24,7 +24,7 @@ import java.util.List;
 @PermitAll
 @RequiredArgsConstructor
 @Route(value = "", layout = MainLayout.class)
-public class ListOfElements extends Div implements AfterNavigationObserver {
+public class ListOfJobs extends Div implements AfterNavigationObserver {
 
     private JobService jobService;
 
@@ -32,7 +32,7 @@ public class ListOfElements extends Div implements AfterNavigationObserver {
     TextField filterText = new TextField();
 
     @Autowired
-    public ListOfElements(JobService jobService) {
+    public ListOfJobs(JobService jobService) {
 
         this.jobService = jobService;
 
@@ -59,11 +59,11 @@ public class ListOfElements extends Div implements AfterNavigationObserver {
         header.setSpacing(false);
         header.getThemeList().add("spacing-s");
 
-        Span name = new Span(job.getTitle());
+        Span name = new Span(job.getJobTitle());
         name.addClassName("name");
         header.add(name);
 
-        Span post = new Span(job.getDescription());
+        Span post = new Span(job.getJobDescription());
         post.addClassName("post");
 
 
@@ -71,7 +71,7 @@ public class ListOfElements extends Div implements AfterNavigationObserver {
         button.addClickListener(clickEvent ->
         {
             button.getUI().ifPresent(ui ->
-                    ui.navigate(ElementView.class, job.getId()));
+                    ui.navigate(ElementView.class, job.getJobId()));
         });
 
         description.add(header, post, button);
@@ -98,7 +98,7 @@ public class ListOfElements extends Div implements AfterNavigationObserver {
     }
 
     private void updateList() {
-        grid.setItems(jobService.sortByName(filterText.getValue()));
+        grid.setItems(jobService.findByKeyWord(filterText.getValue()));
     }
 
     @Override

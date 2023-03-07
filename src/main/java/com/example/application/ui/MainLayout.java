@@ -13,7 +13,6 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -32,7 +31,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink elements = new RouterLink("Список вакансий", ListOfElements.class);
+        RouterLink elements = new RouterLink("Список вакансий", ListOfJobs.class);
         RouterLink userPage = new RouterLink("Страница студента", StudentPage.class);
         RouterLink companyPage = new RouterLink("Страница компании", CompanyPage.class);
 

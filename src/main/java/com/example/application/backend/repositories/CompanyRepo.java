@@ -32,4 +32,9 @@ public class CompanyRepo {
         entityManager.persist(company);
     }
 
+    @Transactional
+    public void removeAllCompanies(){
+        entityManager.createQuery("delete from Company").executeUpdate();
+    }
+
 }

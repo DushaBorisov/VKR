@@ -59,4 +59,8 @@ public class UserService implements UserDetailsService {
     public void saveAdmin(User student) {
         saveUser(student, AuthRoles.ROLE_ADMIN);
     }
+
+    public void deleteAllUsers(){
+        userRepository.deleteAll();
+    }
 }

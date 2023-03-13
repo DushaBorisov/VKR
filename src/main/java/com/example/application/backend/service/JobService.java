@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,7 +27,8 @@ public class JobService {
         try {
             List<JobElasticDocument> documentsList = jobSearchService.search(keyWord, 0, 100);
             documentsList.forEach(document -> {
-                jobList.add(jobRepository.getJobById(document.getJobId()));
+                Optional<Job> jopOp = jobRepository.getJobById(document.getJobId());
+                jopOp.ifPresent(jobList::add);
             });
         } catch (IOException e) {
             log.error("Unable to execute search job. Reason: {}", e.getCause(), e);
@@ -67,5 +69,9 @@ public class JobService {
         }
         // remove job from db
         jobRepository.removeJob(job);
+    }
+
+    public void removeAll(){
+        jobRepository.removeAll();
     }
 }

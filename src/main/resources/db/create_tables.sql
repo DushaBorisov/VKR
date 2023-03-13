@@ -20,7 +20,7 @@ create table students
     student_surname      varchar(255),
     student_email        varchar(255),
     student_phone_number varchar(255),
-    student_resume       varchar(1000),
+    student_resume       varchar(7000),
     desired_position     varchar(255),
     search_status        varchar(255),
     course_of_study      varchar(255)
@@ -31,18 +31,21 @@ create table companies
     company_id           bigserial primary key,
     user_id              bigint references users (id),
     company_name         varchar(255),
-    company_description  varchar(1000),
+    company_description  varchar(7000),
     company_email        varchar(255),
     company_phone_number varchar(255)
 );
 
 create table jobs
 (
-    job_id          bigserial primary key,
-    company_id      bigint references companies (company_id),
-    job_title       varchar(255),
-    job_description varchar(1000),
-    job_status      varchar(255)
+    job_id                  bigserial primary key,
+    company_id              bigint references companies (company_id),
+    job_title               varchar(255),
+    job_description         varchar(7000),
+    job_salary              integer,
+    job_status              varchar(255),
+    job_employment          varchar(50),
+    job_required_experience varchar(50)
 );
 
 create table job_responses
@@ -50,6 +53,6 @@ create table job_responses
     response_id          bigserial primary key,
     student_id           bigint references students (student_id),
     company_id           bigint references companies (company_id),
-    response_description varchar(1000),
+    response_description varchar(7000),
     response_date        timestamp
 );

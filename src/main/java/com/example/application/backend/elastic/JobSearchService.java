@@ -6,8 +6,11 @@ import co.elastic.clients.elasticsearch.core.DeleteResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexTemplateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.RequestOptions;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -101,5 +104,11 @@ public class JobSearchService {
                 .id(String.valueOf(jobId))
                 .build();
         DeleteResponse response = client.delete(deleteRequest);
+    }
+
+    public void deleteIndex() throws IOException {
+            DeleteIndexRequest deleteRequest = new DeleteIndexRequest.Builder().index(SUBJECT_INDEX).build();
+        DeleteIndexTemplateRequest rq= new DeleteIndexTemplateRequest.Builder().name(SUBJECT_INDEX).build();
+        client.indices().deleteIndexTemplate(rq);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.application.backend.entities.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "jobs")
@@ -30,4 +32,13 @@ public class Job {
 
     @Column(name = "job_status")
     private String jobStatus;
+
+    @Column(name = "job_salary")
+    private Integer jobSalary;
+
+    @Column(name = "job_employment")
+    private String jobEmployment;
+
+    @Column(name = "job_required_experience")
+    private String jobRequiredExperience;
 }

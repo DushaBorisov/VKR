@@ -63,8 +63,19 @@ public class ListOfJobs extends Div implements AfterNavigationObserver {
         name.addClassName("name");
         header.add(name);
 
-        Span post = new Span(job.getJobDescription());
-        post.addClassName("post");
+        StringBuilder bodyBuilder = new StringBuilder();
+
+        bodyBuilder.append("Компания : " + job.getCompany().getName())
+                .append("\n")
+                .append("Заработная плата : " + job.getJobSalary() + "₽")
+                .append("\n")
+                .append("Занятость: " + job.getJobEmployment())
+                .append("\n")
+                .append("Требуемый опыт: " + job.getJobRequiredExperience());
+
+        Span salary = new Span(bodyBuilder.toString());
+        salary.addClassName("post");
+        salary.getStyle().set("white-space", "pre-line");
 
 
         Button button = new Button("Подробнее");
@@ -74,7 +85,7 @@ public class ListOfJobs extends Div implements AfterNavigationObserver {
                     ui.navigate(ElementView.class, job.getJobId()));
         });
 
-        description.add(header, post, button);
+        description.add(header, salary, button);
 
 
         card.add(description);

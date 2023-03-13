@@ -34,4 +34,9 @@ public class ElasticSearchTest {
         System.out.println("gg");
 
     }
+
+    @Test
+    void testDeleteIndex() throws IOException {
+        jobSearchService.deleteIndex();
+    }
 }

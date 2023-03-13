@@ -1,16 +1,14 @@
 package com.example.application.backend.entities.models;
 
 import com.example.application.backend.entities.security.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,11 +21,11 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long companyId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "jobId")
+    @OneToMany(mappedBy = "jobId", cascade =CascadeType.REMOVE)
     private Set<Job> jobs;
 
     @Column(name = "company_name")

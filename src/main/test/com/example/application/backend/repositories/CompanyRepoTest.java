@@ -42,4 +42,9 @@ class CompanyRepoTest {
 
         companyRepo.addNewCompany(company);
     }
+
+    @Test
+    void deleteAllCompaniesTest(){
+        companyRepo.removeAllCompanies();
+    }
 }

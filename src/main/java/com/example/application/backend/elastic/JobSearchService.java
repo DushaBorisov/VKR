@@ -1,21 +1,19 @@
 package com.example.application.backend.elastic;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
-import co.elastic.clients.elasticsearch.core.DeleteResponse;
-import co.elastic.clients.elasticsearch.core.IndexResponse;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexRequest;
 import co.elastic.clients.elasticsearch.indices.DeleteIndexTemplateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.RequestOptions;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -107,8 +105,27 @@ public class JobSearchService {
     }
 
     public void deleteIndex() throws IOException {
-            DeleteIndexRequest deleteRequest = new DeleteIndexRequest.Builder().index(SUBJECT_INDEX).build();
-        DeleteIndexTemplateRequest rq= new DeleteIndexTemplateRequest.Builder().name(SUBJECT_INDEX).build();
+        DeleteIndexRequest deleteRequest = new DeleteIndexRequest.Builder().index(SUBJECT_INDEX).build();
+        DeleteIndexTemplateRequest rq = new DeleteIndexTemplateRequest.Builder().name(SUBJECT_INDEX).build();
         client.indices().deleteIndexTemplate(rq);
+    }
+
+    public void updateJobDocument(Long jobId, JobElasticDocument newDocument) throws IOException {
+        Map<String, String> newValuesMap = new HashMap<>();
+
+        if (newDocument.getJobTitle() != null) newValuesMap.put("job_title", newDocument.getJobTitle());
+        if (newDocument.getJobDescription() != null)
+            newValuesMap.put("job_description", newDocument.getJobDescription());
+        if (newDocument.getJobEmployment() != null) newValuesMap.put("job_employment", newDocument.getJobEmployment());
+
+        updateDocument(String.valueOf(jobId), newValuesMap);
+    }
+
+    private void updateDocument(String documentId, Map<String, String> valuesMap) throws IOException {
+        UpdateRequest updateRequest = new UpdateRequest.Builder<>().index(SUBJECT_INDEX)
+                .id(documentId)
+                .doc(valuesMap)
+                .build();
+        client.update(updateRequest, JobElasticDocument.class);
     }
 }

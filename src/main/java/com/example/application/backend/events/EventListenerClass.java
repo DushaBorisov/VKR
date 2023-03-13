@@ -2,9 +2,11 @@ package com.example.application.backend.events;
 
 import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.entities.models.Job;
+import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.entities.security.User;
 import com.example.application.backend.service.CompanyService;
 import com.example.application.backend.service.JobService;
+import com.example.application.backend.service.StudentService;
 import com.example.application.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -24,20 +26,24 @@ public class EventListenerClass {
 
     private final CompanyService companyService;
 
+    private final StudentService studentService;
+
     private List<Company> companyList = new ArrayList<>();
     private List<Job> jobList = new ArrayList<>();
 
-    @EventListener(ApplicationReadyEvent.class)
+    //@EventListener(ApplicationReadyEvent.class)
     void afterStartUpLogic() {
         cleanDb();
         createTestUser("student", "password");
         createCompanies();
         createJobs();
+        createUsers();
     }
 
-    private void cleanDb(){
+    private void cleanDb() {
         jobService.removeAll();
         companyService.removeAll();
+        studentService.removeAll();
         userService.deleteAllUsers();
     }
 
@@ -45,8 +51,8 @@ public class EventListenerClass {
         jobList.add(Job.builder()
                 .company(companyList.get(0))
                 .jobTitle("Стажер-разработчик бэкенда (Java)")
-                        .jobEmployment("Стажировка")
-                        .jobRequiredExperience("Без опыта")
+                .jobEmployment("Стажировка")
+                .jobRequiredExperience("Без опыта")
                 .jobDescription("Многие инструменты в Яндексе работают с колоссальными объемами информации. Сотни миллиардов ссылок, десятки петабайт данных — таковы система управления кластером, поисковый runtime и другие компоненты, от которых зависят надежность и производительность Поиска.\n" +
                         "\n" +
                         "Такую же проверку на прочность миллионами запросов испытывают ежедневно Маркет, Карты, Метрика, ротатор баннеров Яндекса и платформа распределенных вычислений YT. Каждая из этих систем содержит множество взаимосвязанных компонентов с очень высокими требованиями к производительности, отказоустойчивости и надежности.\n" +
@@ -341,6 +347,40 @@ public class EventListenerClass {
                 .build());
 
         companyList.forEach(companyService::saveCompany);
+    }
+
+    private void createUsers() {
+        User andrey = createTestUser("andrey", "password");
+
+        Student student = Student.builder()
+                .user(andrey)
+                .name("Андрей")
+                .surname("Борисов")
+                .courseOfStudy("4")
+                .desiredPosition("Middle Java разработчик")
+                .resume("Есть опыт коммерческой разработки около 2-х лет.\n" +
+                        "\n" +
+                        "За это время поучаствовал в разработки следующих проектов:\n" +
+                        "- Финтех стартап инвестиций в ценные бумаги;\n" +
+                        "- Несколько проектов Telecom компании;\n" +
+                        "- Система документооборота банка;\n" +
+                        "- Система сбора метрик и котировок;\n" +
+                        "\n" +
+                        "Навыки:\n" +
+                        "- Java Core;\n" +
+                        "- Spring(Boot, Web, Data, Test);\n" +
+                        "- Работал с реляционными базами(PostgreSql, MySql);\n" +
+                        "- Работал с NoSql решениями(DynamoDb, MongoDb);\n" +
+                        "- Docker;\n" +
+                        "- Kubernetes;\n" +
+                        "- Работал с AWS(DynamoDb, EKS, SQS);\n" +
+                        "- Покрываю свой код тестами(Junit, Mockito, Harmcrest, Testcontainers);\n" +
+                        "- Работал c Elasticsearch;")
+                .email("borisovandrey.work@gmail.com")
+                .phone("89636333811")
+                .build();
+
+        studentService.saveStudent(student);
     }
 
 

@@ -28,4 +28,7 @@ public class JobElasticDocument {
 
     @JsonProperty("job_status")
     private String jobStatus;
+
+    @JsonProperty("job_employment")
+    private String jobEmployment;
 }

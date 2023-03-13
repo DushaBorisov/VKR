@@ -2,6 +2,8 @@ package com.example.application.ui;
 
 import com.example.application.backend.entities.enums.AuthRoles;
 import com.example.application.security.SecurityService;
+import com.example.application.ui.student.ListOfJobs;
+import com.example.application.ui.student.StudentPage;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;

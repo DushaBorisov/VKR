@@ -54,17 +54,15 @@
   align-items: center;
 }
 
-.card-list-view .icon {
-  color: var(--lumo-tertiary-text-color);
-  height: calc(var(--lumo-icon-size-s) * 0.8);
-  margin-right: var(--lumo-space-s);
-  width: calc(var(--lumo-icon-size-s) * 0.8);
+.card-list-view .toolbar {
+  background-color: var(--lumo-contrast-10pct);
+  border-radius: var(--lumo-border-radius);
+  box-shadow: var(--lumo-box-shadow-xs);
+  padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
 }
 
-.card-list-view .likes,
-.card-list-view .comments,
-.card-list-view .shares {
-  color: var(--lumo-tertiary-text-color);
-  font-size: var(--lumo-font-size-xs);
-  margin-right: var(--lumo-space-l);
-}
+
+
+
+
+

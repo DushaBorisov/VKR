@@ -2,6 +2,7 @@ package com.example.application.backend.service;
 
 import com.example.application.backend.elastic.JobElasticDocument;
 import com.example.application.backend.elastic.JobSearchService;
+import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.repositories.JobRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,6 +38,14 @@ public class JobService {
             return new ArrayList<>();
         }
         return jobList;
+    }
+
+    public List<Job> findByKeyWordsWithFilters(String keyWord, Set<EmploymentEnum> employmentEnum) {
+        List<Job> jobs = findByKeyWord(keyWord);
+        if (employmentEnum == null || employmentEnum.size() == 0) return jobs;
+        Set<String> stringValues = employmentEnum.stream().map(EmploymentEnum::getEmploymentType).collect(Collectors.toSet());
+
+        return jobs.stream().filter(job -> stringValues.contains(job.getJobEmployment())).collect(Collectors.toList());
     }
 
     public List<Job> getAllJobs() {
@@ -71,7 +82,7 @@ public class JobService {
         jobRepository.removeJob(job);
     }
 
-    public void removeAll(){
+    public void removeAll() {
         jobRepository.removeAll();
     }
 }

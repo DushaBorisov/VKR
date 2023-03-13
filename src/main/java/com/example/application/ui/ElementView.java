@@ -2,6 +2,7 @@ package com.example.application.ui;
 
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.service.JobService;
+import com.example.application.ui.student.ListOfJobs;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

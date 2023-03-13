@@ -1,13 +1,18 @@
-package com.example.application.ui;
+package com.example.application.ui.student;
 
+import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.service.JobService;
+import com.example.application.ui.ElementView;
+import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -20,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
+import java.util.Set;
 
 @PermitAll
 @RequiredArgsConstructor
@@ -31,9 +37,11 @@ public class ListOfJobs extends Div implements AfterNavigationObserver {
     Grid<Job> grid = new Grid<>();
     TextField filterText = new TextField();
 
+    MultiSelectComboBox<EmploymentEnum> comboBox = new MultiSelectComboBox<>(
+            "Занятость");
+
     @Autowired
     public ListOfJobs(JobService jobService) {
-
         this.jobService = jobService;
 
         addClassName("card-list-view");
@@ -97,19 +105,32 @@ public class ListOfJobs extends Div implements AfterNavigationObserver {
         filterText.setPlaceholder("Поск по названию");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
+        filterText.setLabel("Ключевое слово");
 
-        filterText.addValueChangeListener(e -> updateList());
+        //filterText.addValueChangeListener(e -> updateList());
 
-        Button addContactButton = new Button("Поиск");
+        Button searchButton = new Button("Поиск");
+        searchButton.addClickListener(
+                clickEvent->{
+                    updateList();
+                }
+        );
 
 
-        HorizontalLayout toolBar = new HorizontalLayout(filterText, addContactButton);
+        comboBox.setItems(EmploymentEnum.values());
+        comboBox.setItemLabelGenerator(EmploymentEnum::getEmploymentType);
+
+
+        HorizontalLayout toolBar = new HorizontalLayout(filterText, comboBox, searchButton);
+        toolBar.setAlignItems(FlexComponent.Alignment.END);
+        toolBar.setPadding(true);
+
         toolBar.addClassName("toolbar");
         return toolBar;
     }
 
     private void updateList() {
-        grid.setItems(jobService.findByKeyWord(filterText.getValue()));
+        grid.setItems(jobService.findByKeyWordsWithFilters(filterText.getValue(), comboBox.getSelectedItems()));
     }
 
     @Override

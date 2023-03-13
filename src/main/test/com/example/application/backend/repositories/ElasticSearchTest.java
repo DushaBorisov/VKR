@@ -39,4 +39,14 @@ public class ElasticSearchTest {
     void testDeleteIndex() throws IOException {
         jobSearchService.deleteIndex();
     }
+
+    @Test
+    void shouldUpdateDocument() throws IOException {
+        JobElasticDocument newJob = JobElasticDocument.builder()
+                .jobTitle("Стажер разработчик на языке Java")
+                .jobEmployment("Стажировка")
+                .jobDescription("Новое описание вакансии")
+                .build();
+        jobSearchService.updateJobDocument(2L, newJob);
+    }
 }

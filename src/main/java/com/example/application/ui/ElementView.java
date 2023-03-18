@@ -2,7 +2,7 @@ package com.example.application.ui;
 
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.service.JobService;
-import com.example.application.ui.student.ListOfJobs;
+import com.example.application.ui.company.ListOfJobs;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -68,9 +68,9 @@ public class ElementView extends VerticalLayout implements HasUrlParameter<Long>
             return;
         }
 
-//        Job job = jobOp.get();
-//
-//        title = new Text(job.getTitle());
+        Job job = jobOp.get();
+
+//        title = new Text(job.getJobTitle());
 //        description = new Text(job.getDescription());
 //        VerticalLayout comp = new VerticalLayout();
 //        comp.setSpacing(true);

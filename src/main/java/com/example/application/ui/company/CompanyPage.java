@@ -1,8 +1,9 @@
-package com.example.application.ui;
+package com.example.application.ui.company;
 
 import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.service.CompanyService;
 import com.example.application.security.SecurityService;
+import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;

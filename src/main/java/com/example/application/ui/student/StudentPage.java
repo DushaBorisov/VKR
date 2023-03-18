@@ -30,6 +30,7 @@ public class StudentPage extends VerticalLayout {
 
     private Span courseOfStudy;
     private Span desiredPosition;
+    private Span desiredSalary;
     private H2 title;
 
     private Span descriptionTitle;
@@ -70,6 +71,9 @@ public class StudentPage extends VerticalLayout {
         desiredPosition = new Span("Желаемая позиция: " + student.getDesiredPosition());
         desiredPosition.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
 
+        desiredSalary = new Span("Желаемая заработная плата: " + student.getDesiredSalary() + "₽");
+        desiredSalary.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
+
         descriptionTitle = new Span("Резюме: ");
         descriptionTitle.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.BLACK);
 
@@ -94,7 +98,7 @@ public class StudentPage extends VerticalLayout {
                     ui.navigate(EditStudentView.class, student.getStudentId()));
         });
 
-        container.add(title, desiredPosition, courseOfStudy, descriptionTitle, description, contacts);
+        container.add(title, desiredPosition,desiredSalary, courseOfStudy, descriptionTitle, description, contacts);
 
         add(container, editButton);
 

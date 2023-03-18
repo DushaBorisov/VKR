@@ -22,8 +22,11 @@ create table students
     student_phone_number varchar(255),
     student_resume       varchar(7000),
     desired_position     varchar(255),
+    desired_salary       integer,
+    desired_employment   varchar(255),
     search_status        varchar(255),
-    course_of_study      varchar(255)
+    course_of_study      varchar(255),
+    experience           integer
 );
 
 create table companies

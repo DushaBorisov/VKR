@@ -1,18 +1,83 @@
 package com.example.application.backend.service;
 
+import com.example.application.backend.elastic.StudentSearchService;
+import com.example.application.backend.elastic.documents.StudentElasticDocument;
+import com.example.application.backend.entities.enums.EmploymentEnum;
+import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final StudentSearchService studentSearchService;
+
+    public List<Student> findByKeyWord(String keyWord) {
+        List<Student> studentList = new ArrayList<>();
+
+        try {
+            List<StudentElasticDocument> documentsList = studentSearchService.search(keyWord, 0, 100);
+            documentsList.forEach(document -> {
+                Optional<Student> jopOp = studentRepository.getStudentById(document.getStudentId());
+                jopOp.ifPresent(studentList::add);
+            });
+        } catch (IOException e) {
+            log.error("Unable to execute search job. Reason: {}", e.getCause(), e);
+            return new ArrayList<>();
+        }
+        return studentList;
+    }
+
+    public List<Student> findByKeyWordsWithFilters(String keyWord, Set<EmploymentEnum> employmentEnum) {
+        List<Student> students = findByKeyWord(keyWord);
+        if (employmentEnum == null || employmentEnum.size() == 0) return students;
+        Set<String> stringValues = employmentEnum.stream().map(EmploymentEnum::getEmploymentType).collect(Collectors.toSet());
+
+        return students.stream().filter(student -> stringValues.contains(student.getDesiredEmployment())).collect(Collectors.toList());
+    }
+
+    public void addNewStudent(Student student) {
+        // save student to db
+        studentRepository.addNewStudent(student);
+        // save student to elastic
+        StudentElasticDocument studentDocument = StudentElasticDocument.builder()
+                .studentId(student.getStudentId())
+                .desiredPosition(student.getDesiredPosition())
+                .name(student.getName())
+                .surname(student.getSurname())
+                .resume(student.getResume())
+                .build();
+        try {
+            studentSearchService.addSingleDocument(studentDocument);
+        } catch (IOException e) {
+            log.error("Unable to save new Student to elastic. Reason: {}", e.getMessage(), e);
+        }
+    }
+
+    public void removeStudent(Student student) {
+        // remove job from elastic
+        try {
+            studentSearchService.removeDocument(student.getStudentId());
+        } catch (IOException e) {
+            log.error("Unable to remove student document from elastic reason: {}", e.getMessage(), e);
+            return;
+        }
+        // remove job from db
+        studentRepository.removeStudent(student);
+    }
 
 
     public Optional<Student> getStudentByUsername(String userName) {
@@ -20,14 +85,14 @@ public class StudentService {
     }
 
     public Optional<Student> getStudentById(Long studentId) {
-        return Optional.of(studentRepository.getStudentById(studentId));
+        return studentRepository.getStudentById(studentId);
     }
 
     public void saveStudent(Student student) {
         studentRepository.addNewStudent(student);
     }
 
-    public void updateStudent(Student student){
+    public void updateStudent(Student student) {
         studentRepository.updateStudent(student);
     }
 

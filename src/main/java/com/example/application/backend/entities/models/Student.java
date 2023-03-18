@@ -43,9 +43,18 @@ public class Student {
     @Column(name = "desired_position")
     private String desiredPosition;
 
+    @Column(name = "desired_salary")
+    private Integer desiredSalary;
+
+    @Column(name = "desired_employment")
+    private String desiredEmployment;
+
     @Column(name = "search_status")
     private String searchStatus;
 
     @Column(name = "course_of_study")
     private String courseOfStudy;
+
+    @Column(name = "experience")
+    private Integer experience;
 }

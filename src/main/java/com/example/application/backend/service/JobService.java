@@ -1,7 +1,7 @@
 package com.example.application.backend.service;
 
-import com.example.application.backend.elastic.JobElasticDocument;
 import com.example.application.backend.elastic.JobSearchService;
+import com.example.application.backend.elastic.documents.JobElasticDocument;
 import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.repositories.JobRepository;
@@ -84,5 +84,9 @@ public class JobService {
 
     public void removeAll() {
         jobRepository.removeAll();
+    }
+
+    public Optional<Job> getJobById(Long id) {
+        return jobRepository.getJobById(id);
     }
 }

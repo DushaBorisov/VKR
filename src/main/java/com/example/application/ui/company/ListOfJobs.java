@@ -1,4 +1,4 @@
-package com.example.application.ui.student;
+package com.example.application.ui.company;
 
 import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Job;
@@ -29,7 +29,7 @@ import java.util.Set;
 
 @PermitAll
 @RequiredArgsConstructor
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "job-info", layout = MainLayout.class)
 public class ListOfJobs extends Div implements AfterNavigationObserver {
 
     private JobService jobService;
@@ -90,7 +90,7 @@ public class ListOfJobs extends Div implements AfterNavigationObserver {
         button.addClickListener(clickEvent ->
         {
             button.getUI().ifPresent(ui ->
-                    ui.navigate(ElementView.class, job.getJobId()));
+                    ui.navigate(JobInfoPage.class, job.getJobId()));
         });
 
         description.add(header, salary, button);

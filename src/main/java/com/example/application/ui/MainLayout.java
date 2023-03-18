@@ -2,7 +2,9 @@ package com.example.application.ui;
 
 import com.example.application.backend.entities.enums.AuthRoles;
 import com.example.application.security.SecurityService;
-import com.example.application.ui.student.ListOfJobs;
+import com.example.application.ui.company.CompanyPage;
+import com.example.application.ui.company.ListOfJobs;
+import com.example.application.ui.student.ListOfStudents;
 import com.example.application.ui.student.StudentPage;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -33,30 +35,30 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink elements = new RouterLink("Список вакансий", ListOfJobs.class);
+        RouterLink jobList = new RouterLink("Список вакансий", ListOfJobs.class);
+        RouterLink studentsList = new RouterLink("Список студентов", ListOfStudents.class);
         RouterLink userPage = new RouterLink("Страница студента", StudentPage.class);
         RouterLink companyPage = new RouterLink("Страница компании", CompanyPage.class);
 
         VerticalLayout listOfPages = new VerticalLayout();
 
-        listOfPages.add(elements);
-
         UserDetails userDetails = securityService.getAuthenticatedUser();
         Collection<GrantedAuthority> list = (Collection<GrantedAuthority>) userDetails.getAuthorities();
         // if role = USER
         if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_USER.getRoleName())){
-            listOfPages.add(userPage);
+            listOfPages.add(userPage, jobList);
         }
         // if role = COMPANY
         if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_COMPANY.getRoleName())){
-            listOfPages.add(companyPage);
+            listOfPages.add(companyPage, studentsList);
         }
         // if role = ADMIN
         if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_ADMIN.getRoleName())){
         }
 
-        elements.setHighlightCondition(HighlightConditions.sameLocation());
+        jobList.setHighlightCondition(HighlightConditions.sameLocation());
         addToDrawer(listOfPages);
+
     }
 
     private void createHeader() {

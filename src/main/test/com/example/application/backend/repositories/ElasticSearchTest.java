@@ -1,6 +1,6 @@
 package com.example.application.backend.repositories;
 
-import com.example.application.backend.elastic.JobElasticDocument;
+import com.example.application.backend.elastic.documents.JobElasticDocument;
 import com.example.application.backend.elastic.JobSearchService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

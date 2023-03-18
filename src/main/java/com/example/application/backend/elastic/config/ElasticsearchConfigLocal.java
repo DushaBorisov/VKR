@@ -1,4 +1,4 @@
-package com.example.application.backend.elastic;
+package com.example.application.backend.elastic.config;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;

@@ -52,6 +52,10 @@ public class JobService {
         return jobRepository.getAllJobs();
     }
 
+    public List<Job> getAllCompanyJobsByCompanyId(Long companyId) {
+        return jobRepository.getAllCompanyJobsByCompanyId(companyId);
+    }
+
     public void addNewJob(Job job) {
         // save job to db
         jobRepository.addNewJob(job);

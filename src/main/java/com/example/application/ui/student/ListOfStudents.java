@@ -13,6 +13,7 @@ import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -22,6 +23,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +36,7 @@ import java.util.List;
 public class ListOfStudents extends Div implements AfterNavigationObserver {
 
     private StudentService studentService;
+    private H2 title;
 
     Grid<Student> grid = new Grid<>();
     TextField filterText = new TextField();
@@ -91,7 +94,7 @@ public class ListOfStudents extends Div implements AfterNavigationObserver {
         button.addClickListener(clickEvent ->
         {
             button.getUI().ifPresent(ui ->
-                    ui.navigate(ElementView.class, student.getStudentId()));
+                    ui.navigate(StudentInfoPage.class, student.getStudentId()));
         });
 
         description.add(header, salary, button);
@@ -116,18 +119,19 @@ public class ListOfStudents extends Div implements AfterNavigationObserver {
                     updateList();
                 }
         );
-
-
         comboBox.setItems(EmploymentEnum.values());
         comboBox.setItemLabelGenerator(EmploymentEnum::getEmploymentType);
 
+        title = new H2("Список студентов");
+        title.addClassNames(LumoUtility.Margin.Bottom.NONE, LumoUtility.Margin.Top.SMALL, LumoUtility.FontSize.LARGE);
 
-        HorizontalLayout toolBar = new HorizontalLayout(filterText, comboBox, searchButton);
-        toolBar.setAlignItems(FlexComponent.Alignment.END);
-        toolBar.setPadding(true);
+        HorizontalLayout searchAndFiltersContainer = new HorizontalLayout(filterText, comboBox, searchButton);
+        searchAndFiltersContainer.setAlignItems(FlexComponent.Alignment.END);
+        searchAndFiltersContainer.setPadding(true);
+        searchAndFiltersContainer.setWidthFull();
 
-        toolBar.addClassName("toolbar");
-        return toolBar;
+        searchAndFiltersContainer.addClassName("toolbar");
+        return searchAndFiltersContainer;
     }
 
     private void updateList() {

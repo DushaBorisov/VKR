@@ -51,11 +51,20 @@ create table jobs
     job_required_experience varchar(50)
 );
 
-create table job_responses
+create table student_responses
 (
     response_id          bigserial primary key,
     student_id           bigint references students (student_id),
-    company_id           bigint references companies (company_id),
-    response_description varchar(7000),
-    response_date        timestamp
+    job_id               bigint references jobs (job_id),
+    response_date        timestamp,
+    company_answer       boolean
+);
+
+create table company_responses
+(
+    response_id          bigserial primary key,
+    student_id           bigint references students (student_id),
+    job_id               bigint references jobs (job_id),
+    response_date        timestamp,
+    student_answer       boolean
 );

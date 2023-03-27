@@ -35,6 +35,12 @@ public class JobRepository {
                 .getResultList();
     }
 
+    public List<Job> getAllCompanyJobsByCompanyId(Long companyId) {
+        return entityManager.createQuery("select j from Job j where j.company.companyId = :id ", Job.class)
+                .setParameter("id", companyId)
+                .getResultList();
+    }
+
     @Transactional
     public void addNewJob(Job job) {
         entityManager.persist(job);
@@ -46,7 +52,7 @@ public class JobRepository {
     }
 
     @Transactional
-    public void removeAll(){
+    public void removeAll() {
         entityManager.createQuery("delete  from Job ").executeUpdate();
     }
 }

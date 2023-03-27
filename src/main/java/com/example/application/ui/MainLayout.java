@@ -3,6 +3,7 @@ package com.example.application.ui;
 import com.example.application.backend.entities.enums.AuthRoles;
 import com.example.application.security.SecurityService;
 import com.example.application.ui.company.CompanyPage;
+import com.example.application.ui.company.ListOfCompanyVacancies;
 import com.example.application.ui.company.ListOfJobs;
 import com.example.application.ui.student.ListOfStudents;
 import com.example.application.ui.student.StudentPage;
@@ -39,6 +40,7 @@ public class MainLayout extends AppLayout {
         RouterLink studentsList = new RouterLink("Список студентов", ListOfStudents.class);
         RouterLink userPage = new RouterLink("Страница студента", StudentPage.class);
         RouterLink companyPage = new RouterLink("Страница компании", CompanyPage.class);
+        RouterLink listOfCompanyVacancies = new RouterLink("Вакансии компании", ListOfCompanyVacancies.class);
 
         VerticalLayout listOfPages = new VerticalLayout();
 
@@ -50,7 +52,7 @@ public class MainLayout extends AppLayout {
         }
         // if role = COMPANY
         if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_COMPANY.getRoleName())){
-            listOfPages.add(companyPage, studentsList);
+            listOfPages.add(companyPage, studentsList, listOfCompanyVacancies);
         }
         // if role = ADMIN
         if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_ADMIN.getRoleName())){
@@ -65,7 +67,7 @@ public class MainLayout extends AppLayout {
         H1 logo = new H1("Вакансии МГТУ");
         logo.addClassNames("text-l", "m-m");
 
-        Button logoutButton = new Button("Log out", e -> securityService.logout());
+        Button logoutButton = new Button("Выход", e -> securityService.logout());
 
         HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo, logoutButton);
 

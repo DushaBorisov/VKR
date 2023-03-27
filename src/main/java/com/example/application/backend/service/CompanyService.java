@@ -5,8 +5,6 @@ import com.example.application.backend.repositories.CompanyRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,17 +17,21 @@ public class CompanyService {
         return Optional.of(companyRepository.getCompanyByUserName(userName));
     }
 
-    public void saveCompany(Company company){
+    public void saveCompany(Company company) {
         companyRepository.addNewCompany(company);
         // save company to elastic
     }
 
-    public void getAllCompanies(){
+    public void getAllCompanies() {
 
     }
 
-    public void removeAll(){
+    public void removeAll() {
         companyRepository.removeAllCompanies();
+    }
+
+    public Optional<Company> getCompanyById(Long companyId) {
+        return companyRepository.getCompanyById(companyId);
     }
 
 }

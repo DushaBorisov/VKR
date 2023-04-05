@@ -1,6 +1,5 @@
 package com.example.application.ui.company;
 
-import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.entities.models.StudentResponseModel;
@@ -8,7 +7,8 @@ import com.example.application.backend.service.CompanyService;
 import com.example.application.backend.service.JobService;
 import com.example.application.backend.service.StudentResponseService;
 import com.example.application.backend.service.StudentService;
-import com.example.application.security.SecurityService;
+import com.example.application.security.UserContext;
+import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
@@ -20,9 +20,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.security.PermitAll;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
 
     private JobService jobService;
     private StudentResponseService studentResponseService;
-    private SecurityService securityService;
+    private UserContext userContext;
     private StudentService studentService;
     private CompanyService companyService;
 
@@ -60,11 +60,11 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
 
     @Autowired
     public JobInfoPage(JobService jobSer, StudentResponseService studentRespService,
-                       SecurityService secService, StudentService stService, CompanyService compService) {
+                       UserContext userContext, StudentService stService, CompanyService compService) {
         this.jobService = jobSer;
         this.companyService = compService;
         this.studentResponseService = studentRespService;
-        this.securityService = secService;
+        this.userContext = userContext;
         this.studentService = stService;
         addClassName("person-form-view");
 
@@ -84,9 +84,10 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
         // set Company id
         companyId = job.getCompany().getCompanyId();
 
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
         // set Student id
-        UserDetails userDetails = securityService.getAuthenticatedUser();
-        String username = userDetails.getUsername();
+        Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
+        String username = useData.get().getUserName();
         Optional<Student> studentOp = studentService.getStudentByUsername(username);
         studentId = studentOp.get().getStudentId();
 

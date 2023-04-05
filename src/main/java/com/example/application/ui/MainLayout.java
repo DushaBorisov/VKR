@@ -1,10 +1,12 @@
 package com.example.application.ui;
 
 import com.example.application.backend.entities.enums.AuthRoles;
-import com.example.application.security.SecurityService;
+import com.example.application.security.UserContext;
+import com.example.application.security.UserData;
 import com.example.application.ui.company.CompanyPage;
 import com.example.application.ui.company.ListOfCompanyVacancies;
 import com.example.application.ui.company.ListOfJobs;
+import com.example.application.ui.security.CustomLoginView;
 import com.example.application.ui.student.ListOfStudents;
 import com.example.application.ui.student.StudentPage;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -14,22 +16,22 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout implements BeforeEnterObserver {
 
-    private SecurityService securityService;
+    private UserContext userContext;
 
     @Autowired
-    public MainLayout(SecurityService securityService) {
-        this.securityService = securityService;
+    public MainLayout(UserContext userContext) {
+        this.userContext = userContext;
         createHeader();
         createDrawer();
 
@@ -44,18 +46,22 @@ public class MainLayout extends AppLayout {
 
         VerticalLayout listOfPages = new VerticalLayout();
 
-        UserDetails userDetails = securityService.getAuthenticatedUser();
-        Collection<GrantedAuthority> list = (Collection<GrantedAuthority>) userDetails.getAuthorities();
-        // if role = USER
-        if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_USER.getRoleName())){
-            listOfPages.add(userPage, jobList);
-        }
-        // if role = COMPANY
-        if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_COMPANY.getRoleName())){
-            listOfPages.add(companyPage, studentsList, listOfCompanyVacancies);
-        }
-        // if role = ADMIN
-        if(list.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()).contains(AuthRoles.ROLE_ADMIN.getRoleName())){
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
+        if(useData.isPresent()) {
+
+            VaadinSession.getCurrent().getSession().getId();
+            // if role = USER
+            if (useData.get().getRole().equals(AuthRoles.ROLE_USER.getRoleName())) {
+                listOfPages.add(userPage, jobList);
+            }
+            // if role = COMPANY
+            if (useData.get().getRole().equals(AuthRoles.ROLE_COMPANY.getRoleName())) {
+                listOfPages.add(companyPage, studentsList, listOfCompanyVacancies);
+            }
+            // if role = ADMIN
+            if (useData.get().getRole().equals(AuthRoles.ROLE_ADMIN.getRoleName())) {
+            }
         }
 
         jobList.setHighlightCondition(HighlightConditions.sameLocation());
@@ -67,7 +73,11 @@ public class MainLayout extends AppLayout {
         H1 logo = new H1("Вакансии МГТУ");
         logo.addClassNames("text-l", "m-m");
 
-        Button logoutButton = new Button("Выход", e -> securityService.logout());
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        Button logoutButton = new Button("Выход", e -> {
+            userContext.deleteUserFromContext(sessionId);
+            getUI().get().navigate(CustomLoginView.class);
+        });
 
         HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo, logoutButton);
 
@@ -77,6 +87,13 @@ public class MainLayout extends AppLayout {
         header.addClassNames("py-0", "px-m");
 
         addToNavbar(header);
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
+        if(useData.isEmpty()) beforeEnterEvent.rerouteTo(CustomLoginView.class);
     }
 }
 

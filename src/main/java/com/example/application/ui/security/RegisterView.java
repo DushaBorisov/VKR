@@ -1,17 +1,13 @@
 package com.example.application.ui.security;
 
-import com.example.application.backend.entities.enums.AuthRoles;
-import com.example.application.backend.entities.security.User;
 import com.example.application.backend.service.UserService;
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.annotation.security.PermitAll;
 
@@ -42,19 +38,19 @@ public class RegisterView extends VerticalLayout {
             return;
         }
 
-        try {
-            userService.loadUserByUsername(username);
-            Notification.show("Username already taken");
-            return;
-        }catch (UsernameNotFoundException ex){
-            User user = new User(username, password);
-            userService.saveUser(user, AuthRoles.ROLE_USER);
+//        try {
+//            userService.loadUserByUsername(username);
+//            Notification.show("Username already taken");
+//            return;
+//        }catch (UsernameNotFoundException ex){
+//            User user = new User(username, password);
+//            userService.saveUser(user, AuthRoles.ROLE_USER);
+//
+//            Notification.show("User registered successfully");
+//            UI.getCurrent().navigate(LoginView.class);
+//        }
 
-            Notification.show("User registered successfully");
-            UI.getCurrent().navigate(LoginView.class);
-        }
-
-        }
     }
+}
 
 

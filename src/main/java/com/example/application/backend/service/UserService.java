@@ -6,32 +6,24 @@ import com.example.application.backend.entities.security.User;
 import com.example.application.backend.repositories.RoleRepository;
 import com.example.application.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
 
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return user;
+    public Optional<User> getByUserName(String userName){
+        return Optional.ofNullable(userRepository.findByUsername(userName));
     }
+
 
     public boolean saveUser(User user, AuthRoles role) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
@@ -43,7 +35,6 @@ public class UserService implements UserDetailsService {
         Role newRole = new Role(role.getRoleName());
         roleRepository.save(newRole);
         user.setRole(newRole);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
     }

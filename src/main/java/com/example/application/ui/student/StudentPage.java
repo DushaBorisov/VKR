@@ -2,8 +2,8 @@ package com.example.application.ui.student;
 
 import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.service.StudentService;
-import com.example.application.security.SecurityService;
-import com.example.application.ui.ElementView;
+import com.example.application.security.UserContext;
+import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
@@ -14,9 +14,9 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.security.PermitAll;
 import java.util.Optional;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @Route(value = "user", layout = MainLayout.class)
 public class StudentPage extends VerticalLayout {
 
-    private SecurityService securityService;
+    private UserContext userContext;
     private StudentService studentService;
 
     private Span courseOfStudy;
@@ -44,14 +44,15 @@ public class StudentPage extends VerticalLayout {
 
 
     @Autowired
-    public StudentPage(SecurityService securityService, StudentService studentService) {
-        this.securityService = securityService;
+    public StudentPage(UserContext userContext, StudentService studentService) {
+        this.userContext =userContext;
         this.studentService = studentService;
 
         addClassName("person-form-view");
 
-        UserDetails userDetails = securityService.getAuthenticatedUser();
-        String username = userDetails.getUsername();
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
+        String username = useData.get().getUserName();
 
         Optional<Student> studentOp = studentService.getStudentByUsername(username);
         if (studentOp.isPresent())

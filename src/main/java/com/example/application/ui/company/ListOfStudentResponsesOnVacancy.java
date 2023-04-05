@@ -1,29 +1,26 @@
 package com.example.application.ui.company;
 
-import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Company;
-import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.entities.models.StudentResponseModel;
 import com.example.application.backend.service.CompanyService;
 import com.example.application.backend.service.JobService;
 import com.example.application.backend.service.StudentResponseService;
-import com.example.application.security.SecurityService;
+import com.example.application.security.UserContext;
+import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
 import com.example.application.ui.student.StudentInfoPage;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
@@ -37,23 +34,24 @@ public class ListOfStudentResponsesOnVacancy extends Div implements HasUrlParame
     private Long jobId;
 
     private JobService jobService;
-    private SecurityService securityService;
     private CompanyService companyService;
+    private UserContext userContext;
 
     private StudentResponseService studentResponseService;
 
     Grid<StudentResponseModel> grid = new Grid<>();
 
     @Autowired
-    public ListOfStudentResponsesOnVacancy(JobService jobService, SecurityService securService,
+    public ListOfStudentResponsesOnVacancy(JobService jobService, UserContext userContext,
                                            CompanyService compService, StudentResponseService studentRespSer) {
-        this.securityService = securService;
+        this.userContext = userContext;
         this.jobService = jobService;
         this.companyService = compService;
         this.studentResponseService = studentRespSer;
 
-        UserDetails userDetails = securityService.getAuthenticatedUser();
-        String username = userDetails.getUsername();
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
+        String username = useData.get().getUserName();
         Optional<Company> companyOp = companyService.getCompanyByUserName(username);
         companyId = companyOp.get().getCompanyId();
 

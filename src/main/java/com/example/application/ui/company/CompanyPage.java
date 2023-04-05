@@ -2,7 +2,8 @@ package com.example.application.ui.company;
 
 import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.service.CompanyService;
-import com.example.application.security.SecurityService;
+import com.example.application.security.UserContext;
+import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -11,9 +12,9 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.security.PermitAll;
 import java.util.Optional;
@@ -23,7 +24,7 @@ import java.util.Optional;
 public class CompanyPage extends VerticalLayout {
 
     private CompanyService companyService;
-    private SecurityService securityService;
+    private UserContext userContext;
 
     private H2 title;
     private Paragraph description;
@@ -32,12 +33,13 @@ public class CompanyPage extends VerticalLayout {
 
 
     @Autowired
-    public CompanyPage(SecurityService securityService, CompanyService companyService) {
-        this.securityService = securityService;
+    public CompanyPage(UserContext userContext, CompanyService companyService) {
+        this.userContext = userContext;
         this.companyService = companyService;
 
-        UserDetails userDetails = securityService.getAuthenticatedUser();
-        String username = userDetails.getUsername();
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
+        String username = useData.get().getUserName();
 
         Optional<Company> companyOp = companyService.getCompanyByUserName(username);
         if (companyOp.isPresent())

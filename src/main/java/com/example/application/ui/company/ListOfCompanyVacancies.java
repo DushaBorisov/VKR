@@ -5,7 +5,8 @@ import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.service.CompanyService;
 import com.example.application.backend.service.JobService;
-import com.example.application.security.SecurityService;
+import com.example.application.security.UserContext;
+import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
@@ -19,9 +20,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
@@ -35,8 +36,8 @@ public class ListOfCompanyVacancies extends Div implements AfterNavigationObserv
     private final Long companyId;
 
     private JobService jobService;
-    private SecurityService securityService;
     private CompanyService companyService;
+    private UserContext userContext;
 
     Grid<Job> grid = new Grid<>();
     TextField filterText = new TextField();
@@ -45,13 +46,14 @@ public class ListOfCompanyVacancies extends Div implements AfterNavigationObserv
             "Занятость");
 
     @Autowired
-    public ListOfCompanyVacancies(JobService jobService, SecurityService securService, CompanyService compService) {
-        this.securityService = securService;
+    public ListOfCompanyVacancies(JobService jobService, UserContext userContext, CompanyService compService) {
+        this.userContext= userContext;
         this.jobService = jobService;
         this.companyService = compService;
 
-        UserDetails userDetails = securityService.getAuthenticatedUser();
-        String username = userDetails.getUsername();
+        String sessionId = VaadinSession.getCurrent().getSession().getId();
+        Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
+        String username = useData.get().getUserName();
         Optional<Company> companyOp = companyService.getCompanyByUserName(username);
         companyId = companyOp.get().getCompanyId();
 

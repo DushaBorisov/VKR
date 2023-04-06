@@ -68,3 +68,30 @@ create table company_responses
     response_date        timestamp,
     student_answer       boolean
 );
+
+create table create_student_account_requests
+(
+    request_id              bigserial primary key,
+    student_first_name      varchar(50),
+    student_last_name       varchar(50),
+    student_course_of_study integer,
+    student_document_number varchar(50),
+    student_phone_number    varchar(50),
+    student_email           varchar(50),
+    request_status          varchar(50),
+    admin_comments          varchar(500),
+    request_date            timestamp
+);
+
+create table create_company_account_requests
+(
+    request_id              bigserial primary key,
+    company_name            varchar(50),
+    company_phone_number    varchar(50),
+    company_email           varchar(50),
+    company_description     varchar(1000),
+    request_status          varchar(50),
+    admin_comments          varchar(500),
+    request_date            timestamp
+);
+

@@ -1,6 +1,8 @@
 package com.example.application.backend.service;
 
+import com.example.application.backend.elastic.CompanyRequestSearchService;
 import com.example.application.backend.elastic.StudentRequestSearchService;
+import com.example.application.backend.elastic.documents.CreateRequestCompany;
 import com.example.application.backend.elastic.documents.CreateRequestStudent;
 import com.example.application.backend.entities.enums.CreateAccountRequestStatus;
 import com.example.application.backend.entities.models.CompanyRegisterRequestModel;
@@ -25,6 +27,7 @@ public class AccountService {
     private final CompanyCreateAccountRequestRepository companyCreateAccountRequestRepository;
     private final StudentCreateAccountRequestRepository studentCreateAccountRequestRepository;
     private final StudentRequestSearchService studentRequestSearchService;
+    private CompanyRequestSearchService companyRequestSearchService;
 
 
     public void createStudentAccount(String name, String surname, String documentNumber,
@@ -55,7 +58,7 @@ public class AccountService {
 
         try {
             studentRequestSearchService.addSingleDocument(createRequestStudent);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             log.error("Unable to save new CreateStudentRequest to elastic. Reason: {}", ex.getMessage(), ex);
         }
     }
@@ -64,8 +67,17 @@ public class AccountService {
         return studentCreateAccountRequestRepository.getAllStudentRequests();
     }
 
-    public Optional<StudentRegisterRequestModel> getStudentRequestModelById(Long id){
+    public List<CompanyRegisterRequestModel> getAllCompanyRequests() {
+        return companyCreateAccountRequestRepository.getAllCompanyRequests();
+    }
+
+
+    public Optional<StudentRegisterRequestModel> getStudentRequestModelById(Long id) {
         return studentCreateAccountRequestRepository.getRequestByById(id);
+    }
+
+    public Optional<CompanyRegisterRequestModel> getCompanyRequestModelById(Long id) {
+        return companyCreateAccountRequestRepository.getRequestByById(id);
     }
 
     public List<StudentRegisterRequestModel> findStudentRequestByKeyWordNameAndSurname(String keyWord) {
@@ -83,6 +95,21 @@ public class AccountService {
         return studentRequestList;
     }
 
+    public List<CompanyRegisterRequestModel> findCompanyRequestByKeyWordCompanyName(String keyWord) {
+        List<CompanyRegisterRequestModel> companyRequestList = new ArrayList<>();
+        try {
+            List<CreateRequestCompany> createRequestList = companyRequestSearchService.search(keyWord, 0, 100);
+            createRequestList.forEach(document -> {
+                Optional<CompanyRegisterRequestModel> reqOp = companyCreateAccountRequestRepository.getRequestByById(document.getRequestId());
+                reqOp.ifPresent(companyRequestList::add);
+            });
+        } catch (IOException e) {
+            log.error("Unable to execute search job. Reason: {}", e.getCause(), e);
+            return new ArrayList<>();
+        }
+        return companyRequestList;
+    }
+
     public void createCompanyAccount(String name, String phone, String email, String description) {
         CompanyRegisterRequestModel registerRequestModel = CompanyRegisterRequestModel.builder()
                 .companyName(name)
@@ -93,5 +120,19 @@ public class AccountService {
                 .requestStatus(CreateAccountRequestStatus.REQUEST_CREATED)
                 .build();
         companyCreateAccountRequestRepository.addNewStudentRegisterRequest(registerRequestModel);
+
+        CreateRequestCompany createRequestCompany = CreateRequestCompany.builder()
+                .requestId(registerRequestModel.getRequestId())
+                .companyName(registerRequestModel.getCompanyName())
+                .companyEmail(registerRequestModel.getCompanyEmail())
+                .companyPhoneNumber(registerRequestModel.getCompanyPhoneNumber())
+                .companyDescription(registerRequestModel.getCompanyDescription())
+                .build();
+
+        try {
+            companyRequestSearchService.addSingleDocument(createRequestCompany);
+        } catch (Exception ex) {
+            log.error("Unable to save new CreateCompanyRequest to elastic. Reason: {}", ex.getMessage(), ex);
+        }
     }
 }

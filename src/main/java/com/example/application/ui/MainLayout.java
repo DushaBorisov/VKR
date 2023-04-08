@@ -3,6 +3,7 @@ package com.example.application.ui;
 import com.example.application.backend.entities.enums.AuthRoles;
 import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
+import com.example.application.ui.admin.ListOfCreateCompanyAccountRequestsView;
 import com.example.application.ui.admin.ListOfCreateStudentAccountRequestsView;
 import com.example.application.ui.company.CompanyPage;
 import com.example.application.ui.company.ListOfCompanyVacancies;
@@ -45,12 +46,13 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         RouterLink companyPage = new RouterLink("Страница компании", CompanyPage.class);
         RouterLink listOfCompanyVacancies = new RouterLink("Вакансии компании", ListOfCompanyVacancies.class);
         RouterLink listOfStudentRequests = new RouterLink("Заявки студентов", ListOfCreateStudentAccountRequestsView.class);
+        RouterLink listOfCompanyRequests = new RouterLink("Заявки компаний", ListOfCreateCompanyAccountRequestsView.class);
 
         VerticalLayout listOfPages = new VerticalLayout();
 
         String sessionId = VaadinSession.getCurrent().getSession().getId();
         Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
-        if(useData.isPresent()) {
+        if (useData.isPresent()) {
 
             VaadinSession.getCurrent().getSession().getId();
             // if role = USER
@@ -63,7 +65,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
             }
             // if role = ADMIN
             if (useData.get().getRole().equals(AuthRoles.ROLE_ADMIN.getRoleName())) {
-                listOfPages.add(listOfStudentRequests);
+                listOfPages.add(listOfStudentRequests, listOfCompanyRequests);
             }
         }
 
@@ -96,7 +98,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
         String sessionId = VaadinSession.getCurrent().getSession().getId();
         Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
-        if(useData.isEmpty()) beforeEnterEvent.rerouteTo(CustomLoginView.class);
+        if (useData.isEmpty()) beforeEnterEvent.rerouteTo(CustomLoginView.class);
     }
 }
 

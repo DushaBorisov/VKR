@@ -1,6 +1,6 @@
 package com.example.application.ui.admin;
 
-import com.example.application.backend.entities.models.StudentRegisterRequestModel;
+import com.example.application.backend.entities.models.CompanyRegisterRequestModel;
 import com.example.application.backend.service.AccountService;
 import com.example.application.backend.service.EmailNotificationService;
 import com.example.application.backend.service.PasswordGeneratorService;
@@ -24,8 +24,8 @@ import javax.annotation.security.PermitAll;
 import java.util.Optional;
 
 @PermitAll
-@Route(value = "student-request-info", layout = MainLayout.class)
-public class StudentRequestInfo extends VerticalLayout implements HasUrlParameter<Long> {
+@Route(value = "company-request-info", layout = MainLayout.class)
+public class CompanyRequestInfo extends VerticalLayout implements HasUrlParameter<Long> {
 
     private Long requestId;
     private AccountService accountService;
@@ -39,6 +39,7 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
     private Span numberOfStudentDocument;
     private Span studentPhoneNumber;
     private Span studentEmail;
+    private Paragraph description;
     private Span commentsLable;
     private TextArea comments;
 
@@ -47,7 +48,7 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
 
 
     @Autowired
-    public StudentRequestInfo(AccountService accountService, EmailNotificationService emailNotificationService, PasswordGeneratorService passwordGeneratorService) {
+    public CompanyRequestInfo(AccountService accountService, EmailNotificationService emailNotificationService, PasswordGeneratorService passwordGeneratorService) {
         this.accountService = accountService;
         this.emailNotificationService = emailNotificationService;
         this.passwordGeneratorService = passwordGeneratorService;
@@ -60,39 +61,38 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
     }
 
     public void createView(Long reqId) {
-        Optional<StudentRegisterRequestModel> studentAccReqOp = accountService.getStudentRequestModelById(reqId);
+        Optional<CompanyRegisterRequestModel> companyAccReqOp = accountService.getCompanyRequestModelById(reqId);
 
-        if (studentAccReqOp.isEmpty()) showError();
-        StudentRegisterRequestModel reqModel = studentAccReqOp.get();
+        if (companyAccReqOp.isEmpty()) showError();
+        CompanyRegisterRequestModel reqModel = companyAccReqOp.get();
 
         VerticalLayout container = new VerticalLayout();
 
-        title = new H2(reqModel.getStudentFirstName() + " " +reqModel.getStudentLastName());
+        title = new H2(reqModel.getCompanyName());
         title.addClassNames(LumoUtility.Margin.Bottom.NONE, LumoUtility.Margin.Top.SMALL, LumoUtility.FontSize.XXXLARGE);
 
-        curseOfStudy = new Span("Курс обучения: " + reqModel.getStudentCourseOfStudy());
-        curseOfStudy.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
+        description = new Paragraph(reqModel.getCompanyDescription());
+        description.getStyle().set("white-space", "pre-line");
+        description.addClassNames(LumoUtility.Margin.Bottom.SMALL, LumoUtility.Margin.Top.NONE, LumoUtility.TextColor.SECONDARY);
 
-        numberOfStudentDocument = new Span("Номер студенческого билета: " + reqModel.getStudentDocumentNumber());
-        numberOfStudentDocument.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
 
-        studentPhoneNumber = new Span("Номер телефона: " + reqModel.getStudentPhoneNumber());
+        studentPhoneNumber = new Span("Номер телефона: " + reqModel.getCompanyPhoneNumber());
         studentPhoneNumber.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
 
-        studentEmail = new Span("Электронная почта: " + reqModel.getStudentEmail());
+        studentEmail = new Span("Электронная почта: " + reqModel.getCompanyEmail());
         studentEmail.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
 
         comments = new TextArea("Укажите при необходимости комментарии к ответу на заявку пользователя, пользователь их увидит в электронном письме:");
         comments.setWidthFull();
 
-        createAccountButton = new Button("Одобрить заявку", e -> createAccount(reqModel.getStudentEmail()));
-        dismissButton = new Button("Отклонить заявку", e -> dismiss(comments.getValue(), reqModel.getStudentEmail()));
+        createAccountButton = new Button("Одобрить заявку", e -> createAccount(reqModel.getCompanyEmail()));
+        dismissButton = new Button("Отклонить заявку", e -> dismiss(comments.getValue(), reqModel.getCompanyEmail()));
         dismissButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         HorizontalLayout buttonContainer = new HorizontalLayout();
         buttonContainer.add(createAccountButton, dismissButton);
 
-        container.add(title, curseOfStudy, numberOfStudentDocument, studentPhoneNumber, studentEmail, comments, buttonContainer);
+        container.add(title, description, studentPhoneNumber, studentEmail, comments, buttonContainer);
         add(container);
     }
 

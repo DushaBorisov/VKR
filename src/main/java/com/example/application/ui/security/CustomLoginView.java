@@ -38,6 +38,10 @@ public class CustomLoginView extends VerticalLayout {
         logo.addClassNames(LumoUtility.Margin.Bottom.NONE, LumoUtility.Margin.Top.SMALL, LumoUtility.FontSize.XXXLARGE);
 
         VerticalLayout container = new VerticalLayout();
+        container.setHeightFull();
+        container.setWidthFull();
+        setJustifyContentMode(JustifyContentMode.CENTER);
+        container.setAlignItems(Alignment.CENTER);
         HorizontalLayout buttonsHolder = new HorizontalLayout();
         //настройка компонентов
         usernameField = new TextField("Логин");

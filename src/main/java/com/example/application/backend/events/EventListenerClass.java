@@ -34,6 +34,7 @@ public class EventListenerClass {
         cleanDb();
         testJobsGenerator.generateTestCompaniesAndJobs();
         testStudentsGenerator.generateTestStudents();
+        createTestAdmin();
     }
 
     private void cleanDb() {
@@ -47,7 +48,7 @@ public class EventListenerClass {
 
     private void createTestAdmin() {
         User user = new User();
-        user.setUsername("test_admin");
+        user.setUsername("admin");
         user.setPassword("password");
         userService.saveAdmin(user);
     }

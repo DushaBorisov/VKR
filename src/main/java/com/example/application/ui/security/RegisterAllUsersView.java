@@ -1,6 +1,6 @@
 package com.example.application.ui.security;
 
-import com.example.application.backend.repositories.CreateAccountService;
+import com.example.application.backend.service.AccountService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -22,7 +22,7 @@ import javax.annotation.security.PermitAll;
 @Route("register-all")
 public class RegisterAllUsersView extends VerticalLayout {
 
-    private CreateAccountService createAccountService;
+    private AccountService accountService;
 
     private TabSheet tabSheet;
     private VerticalLayout registerStudentContainer;
@@ -44,8 +44,8 @@ public class RegisterAllUsersView extends VerticalLayout {
     private TextArea companyDescription;
 
 
-    public RegisterAllUsersView(CreateAccountService createAccountService) {
-        this.createAccountService = createAccountService;
+    public RegisterAllUsersView(AccountService accountService) {
+        this.accountService = accountService;
 
         VerticalLayout container = new VerticalLayout();
         container.setAlignItems(Alignment.CENTER);
@@ -70,8 +70,9 @@ public class RegisterAllUsersView extends VerticalLayout {
         buttonContainer.setAlignItems(Alignment.START);
         buttonContainer.setWidthFull();
         Button registerButton = new Button("Отправить данные на проверку", e -> register());
+        Button backButton = new Button("Вернуться назад", e -> getUI().get().navigate(CustomLoginView.class));
 
-        buttonContainer.add(registerButton);
+        buttonContainer.add(registerButton, backButton);
 
 
         container.add(logo, tabSheet, buttonContainer);
@@ -199,7 +200,7 @@ public class RegisterAllUsersView extends VerticalLayout {
     private void saveRequest(int type) {
         switch (type) {
             case 1: {
-                createAccountService.createStudentAccount(studentFirstName.getValue(),
+                accountService.createStudentAccount(studentFirstName.getValue(),
                         studentLastName.getValue(),
                         studentDocumentNumber.getValue(),
                         Integer.valueOf(studentCourseOfStudy.getValue()),
@@ -209,7 +210,7 @@ public class RegisterAllUsersView extends VerticalLayout {
                 break;
             }
             case 2: {
-                createAccountService.createCompanyAccount(companyName.getValue(),
+                accountService.createCompanyAccount(companyName.getValue(),
                         companyPhoneNumber.getValue(),
                         companyEmail.getValue(),
                         companyDescription.getValue());

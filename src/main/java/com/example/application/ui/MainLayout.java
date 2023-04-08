@@ -3,6 +3,7 @@ package com.example.application.ui;
 import com.example.application.backend.entities.enums.AuthRoles;
 import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
+import com.example.application.ui.admin.ListOfCreateStudentAccountRequestsView;
 import com.example.application.ui.company.CompanyPage;
 import com.example.application.ui.company.ListOfCompanyVacancies;
 import com.example.application.ui.company.ListOfJobs;
@@ -43,6 +44,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         RouterLink userPage = new RouterLink("Страница студента", StudentPage.class);
         RouterLink companyPage = new RouterLink("Страница компании", CompanyPage.class);
         RouterLink listOfCompanyVacancies = new RouterLink("Вакансии компании", ListOfCompanyVacancies.class);
+        RouterLink listOfStudentRequests = new RouterLink("Заявки студентов", ListOfCreateStudentAccountRequestsView.class);
 
         VerticalLayout listOfPages = new VerticalLayout();
 
@@ -61,6 +63,7 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
             }
             // if role = ADMIN
             if (useData.get().getRole().equals(AuthRoles.ROLE_ADMIN.getRoleName())) {
+                listOfPages.add(listOfStudentRequests);
             }
         }
 

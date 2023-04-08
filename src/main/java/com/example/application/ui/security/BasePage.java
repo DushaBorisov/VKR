@@ -4,6 +4,7 @@ import com.example.application.backend.entities.enums.AuthRoles;
 import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
+import com.example.application.ui.admin.ListOfCreateStudentAccountRequestsView;
 import com.example.application.ui.company.ListOfJobs;
 import com.example.application.ui.student.ListOfStudents;
 import com.vaadin.flow.component.html.Div;
@@ -37,6 +38,11 @@ public class BasePage extends Div implements BeforeEnterObserver {
         // if role = COMPANY
         if (useData.get().getRole().equals(AuthRoles.ROLE_COMPANY.getRoleName())) {
             beforeEnterEvent.rerouteTo(ListOfStudents.class);
+        }
+
+        // if role = ADMIN
+        if (useData.get().getRole().equals(AuthRoles.ROLE_ADMIN.getRoleName())) {
+            beforeEnterEvent.rerouteTo(ListOfCreateStudentAccountRequestsView.class);
         }
     }
 }

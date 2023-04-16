@@ -1,15 +1,14 @@
 package com.example.application.ui.admin;
 
+import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.entities.models.StudentRegisterRequestModel;
-import com.example.application.backend.service.AccountService;
-import com.example.application.backend.service.EmailNotificationService;
-import com.example.application.backend.service.PasswordGeneratorService;
+import com.example.application.backend.entities.security.User;
+import com.example.application.backend.service.*;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -29,8 +28,10 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
 
     private Long requestId;
     private AccountService accountService;
+    private StudentService studentService;
     private EmailNotificationService emailNotificationService;
     private PasswordGeneratorService passwordGeneratorService;
+    private UserService userService;
 
     private Label error;
 
@@ -47,10 +48,14 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
 
 
     @Autowired
-    public StudentRequestInfo(AccountService accountService, EmailNotificationService emailNotificationService, PasswordGeneratorService passwordGeneratorService) {
+    public StudentRequestInfo(AccountService accountService, EmailNotificationService emailNotificationService,
+                              PasswordGeneratorService passwordGeneratorService, StudentService studentSer,
+                              UserService userService) {
         this.accountService = accountService;
         this.emailNotificationService = emailNotificationService;
         this.passwordGeneratorService = passwordGeneratorService;
+        this.studentService = studentSer;
+        this.userService = userService;
     }
 
     @Override
@@ -67,7 +72,7 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
 
         VerticalLayout container = new VerticalLayout();
 
-        title = new H2(reqModel.getStudentFirstName() + " " +reqModel.getStudentLastName());
+        title = new H2(reqModel.getStudentFirstName() + " " + reqModel.getStudentLastName());
         title.addClassNames(LumoUtility.Margin.Bottom.NONE, LumoUtility.Margin.Top.SMALL, LumoUtility.FontSize.XXXLARGE);
 
         curseOfStudy = new Span("Курс обучения: " + reqModel.getStudentCourseOfStudy());
@@ -85,7 +90,7 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
         comments = new TextArea("Укажите при необходимости комментарии к ответу на заявку пользователя, пользователь их увидит в электронном письме:");
         comments.setWidthFull();
 
-        createAccountButton = new Button("Одобрить заявку", e -> createAccount(reqModel.getStudentEmail()));
+        createAccountButton = new Button("Одобрить заявку", e -> createAccount(reqModel.getStudentEmail(), reqModel));
         dismissButton = new Button("Отклонить заявку", e -> dismiss(comments.getValue(), reqModel.getStudentEmail()));
         dismissButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
@@ -101,10 +106,42 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
         add(error);
     }
 
-    private void createAccount(String login) {
+    private void createAccount(String login, StudentRegisterRequestModel registerStudentRequest) {
+        // generate password and send email to user
+        String password = sendEmailWithPassword(login);
+        //save new student account
+        saveNewStudent(registerStudentRequest, password);
+        //remove create student request
+        accountService.removeCreateStudentAccountRequest(registerStudentRequest.getRequestId());
+        //redirect to student-requests view
+        getUI().get().navigate(ListOfCreateStudentAccountRequestsView.class);
+    }
+
+    private String sendEmailWithPassword(String login) {
         String password = passwordGeneratorService.generatePassword(10);
         String message = String.format("Заявка на создание аккаунта одобрена. Логин: %s, Пароль: %s", login, password);
         emailNotificationService.sendSimpleEmail(login, "Создание аккаунта", message);
+        return password;
+    }
+
+    private void saveNewStudent(StudentRegisterRequestModel registerStudentRequest, String password) {
+        User user = User.builder()
+                .username(registerStudentRequest.getStudentEmail())
+                .password(password)
+                .build();
+
+        userService.saveStudent(user);
+
+        Student student = Student.builder()
+                .user(user)
+                .name(registerStudentRequest.getStudentFirstName())
+                .surname(registerStudentRequest.getStudentLastName())
+                .courseOfStudy(String.valueOf(registerStudentRequest.getStudentCourseOfStudy()))
+                .phone(registerStudentRequest.getStudentPhoneNumber())
+                .email(registerStudentRequest.getStudentEmail())
+                .build();
+
+        studentService.addNewStudent(student);
     }
 
     private void dismiss(String comments, String login) {

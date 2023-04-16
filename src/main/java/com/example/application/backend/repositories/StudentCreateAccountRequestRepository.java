@@ -23,6 +23,12 @@ public class StudentCreateAccountRequestRepository {
         entityManager.persist(studentResponseModel);
     }
 
+    @Transactional
+    public void deleteCreateNewStudentRequest(Long requestId){
+        StudentRegisterRequestModel request = entityManager.find(StudentRegisterRequestModel.class, requestId);
+        entityManager.remove(request);
+    }
+
     public List<StudentRegisterRequestModel> getAllStudentRequests() {
         return entityManager.createQuery("select r from StudentRegisterRequestModel r ", StudentRegisterRequestModel.class).getResultList();
     }

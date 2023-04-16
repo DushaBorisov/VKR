@@ -135,4 +135,12 @@ public class AccountService {
             log.error("Unable to save new CreateCompanyRequest to elastic. Reason: {}", ex.getMessage(), ex);
         }
     }
+
+    public void removeCreateStudentAccountRequest(Long requestId) {
+        studentCreateAccountRequestRepository.deleteCreateNewStudentRequest(requestId);
+    }
+
+    public void removeCreateCompanyAccountRequest(Long requestId) {
+        companyCreateAccountRequestRepository.deleteCreateNewCompanyRequest(requestId);
+    }
 }

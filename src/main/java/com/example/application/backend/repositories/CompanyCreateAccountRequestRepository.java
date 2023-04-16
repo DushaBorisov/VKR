@@ -1,6 +1,7 @@
 package com.example.application.backend.repositories;
 
 import com.example.application.backend.entities.models.CompanyRegisterRequestModel;
+import com.example.application.backend.entities.models.StudentRegisterRequestModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,12 @@ public class CompanyCreateAccountRequestRepository {
     @Transactional
     public void addNewStudentRegisterRequest(CompanyRegisterRequestModel companyRegisterRequestModel) {
         entityManager.persist(companyRegisterRequestModel);
+    }
+
+    @Transactional
+    public void deleteCreateNewCompanyRequest(Long requestId) {
+        CompanyRegisterRequestModel request = entityManager.find(CompanyRegisterRequestModel.class, requestId);
+        entityManager.remove(request);
     }
 
     public List<CompanyRegisterRequestModel> getAllCompanyRequests() {

@@ -91,7 +91,7 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
         comments.setWidthFull();
 
         createAccountButton = new Button("Одобрить заявку", e -> createAccount(reqModel.getStudentEmail(), reqModel));
-        dismissButton = new Button("Отклонить заявку", e -> dismiss(comments.getValue(), reqModel.getStudentEmail()));
+        dismissButton = new Button("Отклонить заявку", e -> dismissAccountCreation(reqModel.getStudentEmail(), comments.getValue(), reqModel.getRequestId()));
         dismissButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         HorizontalLayout buttonContainer = new HorizontalLayout();
@@ -116,6 +116,17 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
         //redirect to student-requests view
         getUI().get().navigate(ListOfCreateStudentAccountRequestsView.class);
     }
+
+    private void dismissAccountCreation(String email, String comments, Long requestId){
+        // send email
+        sendDismissEmail(comments, email);
+        // remove create-student request
+        accountService.removeCreateStudentAccountRequest(requestId);
+        // redirect to student-requests view
+        getUI().get().navigate(ListOfCreateStudentAccountRequestsView.class);
+    }
+
+
 
     private String sendEmailWithPassword(String login) {
         String password = passwordGeneratorService.generatePassword(10);
@@ -144,7 +155,7 @@ public class StudentRequestInfo extends VerticalLayout implements HasUrlParamete
         studentService.addNewStudent(student);
     }
 
-    private void dismiss(String comments, String login) {
+    private void sendDismissEmail(String comments, String login) {
         String message;
         if (comments != null) {
 

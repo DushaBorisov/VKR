@@ -3,7 +3,6 @@ package com.example.application.backend.service;
 import com.example.application.backend.elastic.StudentSearchService;
 import com.example.application.backend.elastic.documents.StudentElasticDocument;
 import com.example.application.backend.entities.enums.EmploymentEnum;
-import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,26 +26,41 @@ public class StudentService {
 
     public List<Student> findByKeyWord(String keyWord) {
         List<Student> studentList = new ArrayList<>();
-
-        try {
-            List<StudentElasticDocument> documentsList = studentSearchService.search(keyWord, 0, 100);
-            documentsList.forEach(document -> {
-                Optional<Student> jopOp = studentRepository.getStudentById(document.getStudentId());
-                jopOp.ifPresent(studentList::add);
-            });
-        } catch (IOException e) {
-            log.error("Unable to execute search job. Reason: {}", e.getCause(), e);
-            return new ArrayList<>();
+        if (keyWord != "") {
+            try {
+                List<StudentElasticDocument> documentsList = studentSearchService.search(keyWord, 0, 100);
+                List<Student> finalStudentList = new ArrayList<>();
+                documentsList.forEach(document -> {
+                    Optional<Student> jopOp = studentRepository.getStudentById(document.getStudentId());
+                    jopOp.ifPresent(finalStudentList::add);
+                });
+                studentList = finalStudentList;
+            } catch (IOException e) {
+                log.error("Unable to execute search job. Reason: {}", e.getCause(), e);
+                return new ArrayList<>();
+            }
+        } else {
+            studentList = getAllStudents();
         }
+
         return studentList;
     }
 
     public List<Student> findByKeyWordsWithFilters(String keyWord, Set<EmploymentEnum> employmentEnum) {
-        List<Student> students = findByKeyWord(keyWord);
+        List<Student> students = null;
+        if (keyWord == "")
+            students = getAllStudents();
+        else
+            students = findByKeyWord(keyWord);
         if (employmentEnum == null || employmentEnum.size() == 0) return students;
         Set<String> stringValues = employmentEnum.stream().map(EmploymentEnum::getEmploymentType).collect(Collectors.toSet());
 
-        return students.stream().filter(student -> stringValues.contains(student.getDesiredEmployment())).collect(Collectors.toList());
+        return students.stream()
+                .filter(student -> stringValues.contains(student.getDesiredEmployment()))
+                .filter(el -> el.getName() != null && el.getSurname() != null
+                        && el.getCourseOfStudy() != null && el.getExperience() != null
+                        && el.getResume() != null && el.getDesiredPosition() != null)
+                .collect(Collectors.toList());
     }
 
     public void addNewStudent(Student student) {
@@ -102,5 +116,14 @@ public class StudentService {
 
     public List<Student> getAllStudents() {
         return studentRepository.getAllStudents();
+    }
+
+    public List<Student> getAllStudentsWithFiltrationNotEmptyData() {
+        List<Student> studentList = studentRepository.getAllStudents();
+        return studentList.stream().filter(
+                el -> el.getName() != null && el.getSurname() != null
+                        && el.getCourseOfStudy() != null && el.getExperience() != null
+                        && el.getResume() != null && el.getDesiredPosition() != null
+        ).collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 package com.example.application.ui.student;
 
+import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Student;
 import com.example.application.backend.service.StudentService;
 import com.example.application.ui.MainLayout;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEvent;
@@ -20,6 +22,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.security.PermitAll;
+import java.util.Arrays;
 import java.util.Optional;
 
 @PermitAll
@@ -39,6 +42,8 @@ public class EditStudentView extends VerticalLayout implements HasUrlParameter<L
     TextField courseOfStudy;
     TextField phoneNumber;
     TextField email;
+    Select<String> desiredEmployment;
+    TextField experience;
 
     private StudentService studentService;
 
@@ -62,9 +67,16 @@ public class EditStudentView extends VerticalLayout implements HasUrlParameter<L
         desiredPosition = new TextField("Желаемая должность");
         desiredPosition.setValue((student.getDesiredPosition() != null) ? student.getDesiredPosition() : "");
         desiredSalary = new TextField("Желаемая заработная плата:");
-        desiredSalary.setValue(student.getDesiredSalary().toString());
+        desiredSalary.setValue((student.getDesiredSalary() != null) ? student.getDesiredSalary().toString() : "");
         courseOfStudy = new TextField("Курс обучения");
         courseOfStudy.setValue((student.getCourseOfStudy() != null) ? student.getCourseOfStudy() : "");
+
+        desiredEmployment = new Select<>();
+        desiredEmployment.setLabel("Тип занятости");
+        desiredEmployment.setItems(Arrays.stream(EmploymentEnum.values()).map(en -> en.getEmploymentType()));
+        experience = new TextField("Опыт");
+        experience.setValue((student.getExperience() != null) ? student.getExperience().toString() : "");
+
         phoneNumber = new TextField("Телефон");
         phoneNumber.setValue(student.getPhone());
         email = new TextField("Почта");
@@ -73,10 +85,10 @@ public class EditStudentView extends VerticalLayout implements HasUrlParameter<L
         resume = new TextArea();
         resume.setWidthFull();
         resume.setLabel("Резюме");
-        resume.setValue(student.getResume());
+        resume.setValue((student.getResume() != null) ? student.getResume() : "");
 
         FormLayout formLayout = new FormLayout();
-        formLayout.add(firstName, lastName, desiredPosition, desiredSalary, courseOfStudy, phoneNumber, email);
+        formLayout.add(firstName, lastName, desiredPosition, desiredSalary, courseOfStudy, desiredEmployment, experience, phoneNumber, email);
         formLayout.setResponsiveSteps(
                 // Use one column by default
                 new FormLayout.ResponsiveStep("0", 1),
@@ -133,6 +145,8 @@ public class EditStudentView extends VerticalLayout implements HasUrlParameter<L
         student.setCourseOfStudy(courseOfStudy.getValue());
         student.setEmail(email.getValue());
         student.setPhone(phoneNumber.getValue());
+        student.setExperience(Integer.valueOf(experience.getValue()));
+        student.setDesiredEmployment(desiredEmployment.getValue());
     }
 
     private void updateStudentData(Student student) {

@@ -1,5 +1,7 @@
 package com.example.application.backend.events;
 
+import com.example.application.backend.elastic.JobSearchService;
+import com.example.application.backend.elastic.StudentSearchService;
 import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.entities.security.User;
@@ -9,6 +11,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +31,14 @@ public class EventListenerClass {
     private final CompanyResponseService companyResponseService;
     private final StudentResponseService studentResponseService;
 
+    private final JobSearchService jobSearchService;
+    private final StudentSearchService studentSearchService;
+
 
     @EventListener(ApplicationReadyEvent.class)
     void afterStartUpLogic() {
         cleanDb();
+        //cleanElastic();
         testJobsGenerator.generateTestCompaniesAndJobs();
         testStudentsGenerator.generateTestStudents();
         createTestAdmin();
@@ -45,6 +52,19 @@ public class EventListenerClass {
         studentService.removeAll();
         userService.deleteAllUsers();
     }
+
+//    private void cleanElastic(){
+//        try {
+//            jobSearchService.deleteIndex();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        try {
+//            studentSearchService.deleteIndex();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private void createTestAdmin() {
         User user = new User();

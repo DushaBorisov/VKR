@@ -1,9 +1,9 @@
 package com.example.application.ui.admin;
 
+import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.entities.models.CompanyRegisterRequestModel;
-import com.example.application.backend.service.AccountService;
-import com.example.application.backend.service.EmailNotificationService;
-import com.example.application.backend.service.PasswordGeneratorService;
+import com.example.application.backend.entities.security.User;
+import com.example.application.backend.service.*;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -21,6 +21,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.security.PermitAll;
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @PermitAll
@@ -31,6 +32,8 @@ public class CompanyRequestInfo extends VerticalLayout implements HasUrlParamete
     private AccountService accountService;
     private EmailNotificationService emailNotificationService;
     private PasswordGeneratorService passwordGeneratorService;
+    private UserService userService;
+    private CompanyService companyService;
 
     private Label error;
 
@@ -48,10 +51,14 @@ public class CompanyRequestInfo extends VerticalLayout implements HasUrlParamete
 
 
     @Autowired
-    public CompanyRequestInfo(AccountService accountService, EmailNotificationService emailNotificationService, PasswordGeneratorService passwordGeneratorService) {
+    public CompanyRequestInfo(AccountService accountService, EmailNotificationService emailNotificationService,
+                              PasswordGeneratorService passwordGeneratorService, UserService userService,
+                              CompanyService companyService) {
         this.accountService = accountService;
         this.emailNotificationService = emailNotificationService;
         this.passwordGeneratorService = passwordGeneratorService;
+        this.userService = userService;
+        this.companyService = companyService;
     }
 
     @Override
@@ -85,8 +92,8 @@ public class CompanyRequestInfo extends VerticalLayout implements HasUrlParamete
         comments = new TextArea("Укажите при необходимости комментарии к ответу на заявку пользователя, пользователь их увидит в электронном письме:");
         comments.setWidthFull();
 
-        createAccountButton = new Button("Одобрить заявку", e -> createAccount(reqModel.getCompanyEmail()));
-        dismissButton = new Button("Отклонить заявку", e -> dismiss(comments.getValue(), reqModel.getCompanyEmail()));
+        createAccountButton = new Button("Одобрить заявку", e -> createAccount(reqModel.getCompanyEmail(), reqModel));
+        dismissButton = new Button("Отклонить заявку", e -> dismissAccountCreation(reqModel.getCompanyEmail(), comments.getValue(), reqModel.getRequestId()));
         dismissButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         HorizontalLayout buttonContainer = new HorizontalLayout();
@@ -101,13 +108,35 @@ public class CompanyRequestInfo extends VerticalLayout implements HasUrlParamete
         add(error);
     }
 
-    private void createAccount(String login) {
+    private void createAccount(String login, CompanyRegisterRequestModel request) {
+        // generate password and send email to user
+        String password = sendEmailWithPassword(login);
+        // save new company account
+        saveNewCompany(request, password);
+        // remove create-company request
+        accountService.removeCreateCompanyAccountRequest(request.getRequestId());
+        // redirect to company-requests page
+        getUI().get().navigate(ListOfCreateCompanyAccountRequestsView.class);
+    }
+
+    private void dismissAccountCreation(String email, String comments, Long requestId){
+        // send email
+        sendDismissEmail(comments, email);
+        // remove create-student request
+        accountService.removeCreateCompanyAccountRequest(requestId);
+        // redirect to student-requests view
+        getUI().get().navigate(ListOfCreateCompanyAccountRequestsView.class);
+    }
+
+
+    private String sendEmailWithPassword(String login) {
         String password = passwordGeneratorService.generatePassword(10);
         String message = String.format("Заявка на создание аккаунта одобрена. Логин: %s, Пароль: %s", login, password);
         emailNotificationService.sendSimpleEmail(login, "Создание аккаунта", message);
+        return password;
     }
 
-    private void dismiss(String comments, String login) {
+    private void sendDismissEmail(String comments, String login) {
         String message;
         if (comments != null) {
 
@@ -116,5 +145,25 @@ public class CompanyRequestInfo extends VerticalLayout implements HasUrlParamete
             message = "Заявка на создание аккаунта отклонена";
 
         emailNotificationService.sendSimpleEmail(login, "Создание аккаунта", message);
+    }
+
+    @Transactional
+    void saveNewCompany(CompanyRegisterRequestModel request, String password) {
+        User user = User.builder()
+                .username(request.getCompanyEmail())
+                .password(password)
+                .build();
+
+        userService.saveCompany(user);
+
+        Company company = Company.builder()
+                .user(user)
+                .name(request.getCompanyName())
+                .description(request.getCompanyDescription())
+                .email(request.getCompanyEmail())
+                .phoneNumber(request.getCompanyPhoneNumber())
+                .build();
+
+        companyService.saveCompany(company);
     }
 }

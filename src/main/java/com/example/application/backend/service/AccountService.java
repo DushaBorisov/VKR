@@ -27,7 +27,7 @@ public class AccountService {
     private final CompanyCreateAccountRequestRepository companyCreateAccountRequestRepository;
     private final StudentCreateAccountRequestRepository studentCreateAccountRequestRepository;
     private final StudentRequestSearchService studentRequestSearchService;
-    private CompanyRequestSearchService companyRequestSearchService;
+    private final  CompanyRequestSearchService companyRequestSearchService;
 
 
     public void createStudentAccount(String name, String surname, String documentNumber,
@@ -135,6 +135,8 @@ public class AccountService {
             log.error("Unable to save new CreateCompanyRequest to elastic. Reason: {}", ex.getMessage(), ex);
         }
     }
+
+
 
     public void removeCreateStudentAccountRequest(Long requestId) {
         studentCreateAccountRequestRepository.deleteCreateNewStudentRequest(requestId);

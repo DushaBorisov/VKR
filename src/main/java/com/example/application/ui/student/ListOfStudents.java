@@ -140,7 +140,7 @@ public class ListOfStudents extends Div implements AfterNavigationObserver {
 
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
-        List<Student> studentList = studentService.getAllStudents();
+        List<Student> studentList = studentService.getAllStudentsWithFiltrationNotEmptyData();
         grid.setItems(studentList);
     }
 

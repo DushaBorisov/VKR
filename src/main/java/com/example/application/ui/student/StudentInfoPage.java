@@ -5,10 +5,9 @@ import com.example.application.backend.service.StudentService;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -28,8 +27,9 @@ public class StudentInfoPage extends VerticalLayout implements HasUrlParameter<L
 
 
     private H2 title;
+    private H1 resumeTitle;
 
-    private Span name;
+    private Span baseInfo;
     private Span surname;
     private Span courseOfStudy;
     private Span experience;
@@ -41,6 +41,7 @@ public class StudentInfoPage extends VerticalLayout implements HasUrlParameter<L
     private Accordion contacts;
 
     private Button responseButton;
+    private Button moveBackButton;
 
     private Label error;
 
@@ -72,30 +73,27 @@ public class StudentInfoPage extends VerticalLayout implements HasUrlParameter<L
                 .append(student.getName())
                 .append("\n")
                 .append("Фамилия: ")
-                .append(student.getName())
+                .append(student.getSurname())
                 .append("\n")
                 .append("Курс обучения: ")
-                .append(student.getCourseOfStudy());
+                .append(student.getCourseOfStudy())
+                .append("\n")
+                .append("Опыт: ")
+                .append(student.getExperience())
+                .append("\n")
+                .append("Занятость: ")
+                .append(student.getDesiredEmployment())
+                .append("\n")
+                .append("Заработная плата: ")
+                .append(student.getDesiredSalary() + "₽")
+                .append("\n");
 
-        name = new Span(baseInfoBuilder.toString());
-        name.getStyle().set("white-space", "pre-line");
-        name.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
-        surname = new Span("Фамилия: " + student.getName());
-        surname.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
+        baseInfo = new Span(baseInfoBuilder.toString());
+        baseInfo.getStyle().set("white-space", "pre-line");
+        baseInfo.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
 
-        courseOfStudy = new Span("Курс обучения: " + student.getCourseOfStudy());
-        courseOfStudy.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
-
-        experience = new Span("Опыт: " + student.getExperience());
-        experience.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
-
-        employmentType = new Span("Занятость: " + student.getDesiredEmployment());
-        employmentType.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
-
-        salary = new Span("Заработная плата: " + student.getDesiredSalary() + "₽");
-        salary.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.FontWeight.MEDIUM);
-
-
+        resumeTitle = new H1("Резюме:");
+        resumeTitle.addClassNames(LumoUtility.Margin.Bottom.NONE, LumoUtility.Margin.Top.SMALL, LumoUtility.FontSize.LARGE);
         resume = new Paragraph(student.getResume());
         resume.getStyle().set("white-space", "pre-line");
         resume.addClassNames(LumoUtility.Margin.Bottom.SMALL, LumoUtility.Margin.Top.NONE, LumoUtility.TextColor.SECONDARY);
@@ -109,9 +107,15 @@ public class StudentInfoPage extends VerticalLayout implements HasUrlParameter<L
         personalInformationLayout.setPadding(false);
         contacts.add("Контактная информация", personalInformationLayout);
 
-        responseButton = new Button("Отправить приглашение");
 
-        container.add(title,name,surname, courseOfStudy,experience, employmentType, salary, resume,contacts,responseButton);
+        HorizontalLayout buttonsContainer = new HorizontalLayout();
+        responseButton = new Button("Отправить приглашение");
+        moveBackButton = new Button("Назад", e -> getUI().get().navigate(ListOfStudents.class));
+        moveBackButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        buttonsContainer.add(responseButton,  moveBackButton);
+
+
+        container.add(title, baseInfo, resumeTitle, resume, contacts, buttonsContainer);
         add(container);
     }
 

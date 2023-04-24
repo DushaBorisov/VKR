@@ -5,6 +5,7 @@ import com.example.application.backend.repositories.CompanyResponseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +18,10 @@ public class CompanyResponseService {
 
     public Optional<CompanyResponseModel> getCompanyResponseModelByCompanyIdAndStudentId(Long companyId, Long studentId) {
         return companyResponseRepository.getCompanyResponseByJobIdAndStudentId(companyId, studentId);
+    }
+
+    public List<CompanyResponseModel> getCompanyResponseModelByStudentId(Long studentId) {
+        return companyResponseRepository.getCompanyResponseByStudentId(studentId);
     }
 
     public void saveCompanyResponseModel(CompanyResponseModel companyResponseModel) {

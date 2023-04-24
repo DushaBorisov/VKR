@@ -6,9 +6,11 @@ import com.example.application.security.UserData;
 import com.example.application.ui.admin.ListOfCreateCompanyAccountRequestsView;
 import com.example.application.ui.admin.ListOfCreateStudentAccountRequestsView;
 import com.example.application.ui.company.CompanyPage;
+import com.example.application.ui.company.CreateJobView;
 import com.example.application.ui.company.ListOfCompanyVacancies;
 import com.example.application.ui.company.ListOfJobs;
 import com.example.application.ui.security.CustomLoginView;
+import com.example.application.ui.student.InvitationsListView;
 import com.example.application.ui.student.ListOfStudents;
 import com.example.application.ui.student.StudentPage;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -47,6 +49,8 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
         RouterLink listOfCompanyVacancies = new RouterLink("Вакансии компании", ListOfCompanyVacancies.class);
         RouterLink listOfStudentRequests = new RouterLink("Заявки студентов", ListOfCreateStudentAccountRequestsView.class);
         RouterLink listOfCompanyRequests = new RouterLink("Заявки компаний", ListOfCreateCompanyAccountRequestsView.class);
+        RouterLink invitationList = new RouterLink("Приглашения", InvitationsListView.class);
+        RouterLink createJob = new RouterLink("Создание вакансии", CreateJobView.class);
 
         VerticalLayout listOfPages = new VerticalLayout();
 
@@ -57,11 +61,11 @@ public class MainLayout extends AppLayout implements BeforeEnterObserver {
             VaadinSession.getCurrent().getSession().getId();
             // if role = USER
             if (useData.get().getRole().equals(AuthRoles.ROLE_USER.getRoleName())) {
-                listOfPages.add(userPage, jobList);
+                listOfPages.add(userPage, jobList, invitationList);
             }
             // if role = COMPANY
             if (useData.get().getRole().equals(AuthRoles.ROLE_COMPANY.getRoleName())) {
-                listOfPages.add(companyPage, studentsList, listOfCompanyVacancies);
+                listOfPages.add(companyPage, studentsList, listOfCompanyVacancies, createJob);
             }
             // if role = ADMIN
             if (useData.get().getRole().equals(AuthRoles.ROLE_ADMIN.getRoleName())) {

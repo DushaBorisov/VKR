@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,7 +20,7 @@ public class CompanyResponseRepository {
 
 
     public Optional<CompanyResponseModel> getCompanyResponseByJobIdAndStudentId(Long jobId, Long studentId) {
-       CompanyResponseModel companyResponseModel;
+        CompanyResponseModel companyResponseModel;
         try {
             companyResponseModel = entityManager.createQuery(
                             "select cr from CompanyResponseModel cr " +
@@ -35,7 +36,17 @@ public class CompanyResponseRepository {
         return Optional.ofNullable(companyResponseModel);
     }
 
-    public void addNewCompanyResponse(CompanyResponseModel companyResponseModel){
+    public List<CompanyResponseModel> getCompanyResponseByStudentId(Long studentId) {
+        return entityManager.createQuery(
+                        "select cr from CompanyResponseModel cr " +
+                                "where cr.student.studentId = :studentId",
+                        CompanyResponseModel.class)
+                .setParameter("studentId", studentId)
+                .getResultList();
+    }
+
+    @Transactional
+    public void addNewCompanyResponse(CompanyResponseModel companyResponseModel) {
         entityManager.persist(companyResponseModel);
     }
 

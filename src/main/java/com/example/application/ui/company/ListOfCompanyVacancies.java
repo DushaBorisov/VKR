@@ -9,6 +9,7 @@ import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -101,8 +102,8 @@ public class ListOfCompanyVacancies extends Div implements AfterNavigationObserv
         Button editButton = new Button("Редактировать");
         editButton.addClickListener(clickEvent ->
         {
-//            editButton.getUI().ifPresent(ui ->
-//                    ui.navigate(JobInfoPage.class, job.getJobId()));
+            editButton.getUI().ifPresent(ui ->
+                    ui.navigate(EditJobView.class, job.getJobId()));
         });
 
         Button responsesButton = new Button("Отклики на вакансию");
@@ -112,8 +113,17 @@ public class ListOfCompanyVacancies extends Div implements AfterNavigationObserv
                     ui.navigate(ListOfStudentResponsesOnVacancy.class, job.getJobId()));
         });
 
+        Button deleteButton = new Button("Удалить");
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        deleteButton.addClickListener(clickEvent ->
+        {
+            jobService.removeJob(job);
+            List<Job> jobList = jobService.getAllCompanyJobsByCompanyId(companyId);
+            grid.setItems(jobList);
+        });
+
         HorizontalLayout buttonsContainer = new HorizontalLayout();
-        buttonsContainer.add(editButton, responsesButton);
+        buttonsContainer.add(editButton, deleteButton, responsesButton);
 
         description.add(header, salary, buttonsContainer);
 

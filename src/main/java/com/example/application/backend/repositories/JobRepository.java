@@ -1,5 +1,6 @@
 package com.example.application.backend.repositories;
 
+import com.example.application.backend.entities.models.Company;
 import com.example.application.backend.entities.models.Job;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,11 +49,16 @@ public class JobRepository {
 
     @Transactional
     public void removeJob(Job job) {
-        entityManager.remove(job);
+        entityManager.remove(entityManager.contains(job) ? job : entityManager.merge(job));
     }
 
     @Transactional
     public void removeAll() {
         entityManager.createQuery("delete  from Job ").executeUpdate();
+    }
+
+    @Transactional
+    public void updateJob(Job job){
+        entityManager.merge(job);
     }
 }

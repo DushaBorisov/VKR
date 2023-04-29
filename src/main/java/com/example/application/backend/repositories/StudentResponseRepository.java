@@ -50,4 +50,11 @@ public class StudentResponseRepository {
     public void removeAllResponses() {
         entityManager.createQuery("delete from StudentResponseModel").executeUpdate();
     }
+
+    @Transactional
+    public void removeStudentResponsesByJobId(Long jobId) {
+        entityManager.createQuery("delete  from StudentResponseModel sr  where sr.job.jobId = :jobId")
+                .setParameter("jobId", jobId)
+                .executeUpdate();
+    }
 }

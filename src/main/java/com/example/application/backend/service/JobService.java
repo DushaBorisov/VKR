@@ -4,11 +4,14 @@ import com.example.application.backend.elastic.JobSearchService;
 import com.example.application.backend.elastic.documents.JobElasticDocument;
 import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Job;
+import com.example.application.backend.repositories.CompanyResponseRepository;
 import com.example.application.backend.repositories.JobRepository;
+import com.example.application.backend.repositories.StudentResponseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,8 @@ public class JobService {
 
     private final JobSearchService jobSearchService;
     private final JobRepository jobRepository;
+    private final CompanyResponseRepository companyResponseRepository;
+    private final StudentResponseRepository studentResponseRepository;
 
     public List<Job> findByKeyWord(String keyWord) {
         List<Job> jobList = new ArrayList<>();
@@ -79,6 +84,7 @@ public class JobService {
         }
     }
 
+    @Transactional
     public void removeJob(Job job) {
         // remove job from elastic
         try {
@@ -87,6 +93,8 @@ public class JobService {
             log.error("Unable to remove job document from elastic reason: {}", e.getMessage(), e);
             return;
         }
+        companyResponseRepository.removeCompanyResponsesByJobId(job.getJobId());
+        studentResponseRepository.removeStudentResponsesByJobId(job.getJobId());
         // remove job from db
         jobRepository.removeJob(job);
     }
@@ -97,5 +105,10 @@ public class JobService {
 
     public Optional<Job> getJobById(Long id) {
         return jobRepository.getJobById(id);
+    }
+
+
+    public void updateJob(Job job) {
+        jobRepository.updateJob(job);
     }
 }

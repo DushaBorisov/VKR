@@ -2,6 +2,8 @@ package com.example.application.backend.entities.models;
 
 import com.example.application.backend.entities.security.User;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

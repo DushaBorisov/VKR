@@ -52,4 +52,9 @@ public class CompanyRepo {
         entityManager.createQuery("delete from Company").executeUpdate();
     }
 
+    @Transactional
+    public void updateCompany(Company company){
+        entityManager.merge(company);
+    }
+
 }

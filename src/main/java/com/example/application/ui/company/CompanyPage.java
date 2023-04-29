@@ -5,11 +5,13 @@ import com.example.application.backend.service.CompanyService;
 import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
@@ -30,6 +32,8 @@ public class CompanyPage extends VerticalLayout {
     private Paragraph description;
     private Label error;
     private Button editButton;
+
+    private Accordion contacts;
 
 
     @Autowired
@@ -58,7 +62,15 @@ public class CompanyPage extends VerticalLayout {
         editButton = new Button("Редактировать данные", e -> getUI().get().navigate(EditCompanyView.class, company.getCompanyId()));
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        container.add(title, description);
+        contacts = new Accordion();
+        Span email = new Span(company.getEmail());
+        Span phone = new Span(company.getPhoneNumber());
+        VerticalLayout personalInformationLayout = new VerticalLayout(email, phone);
+        personalInformationLayout.setSpacing(false);
+        personalInformationLayout.setPadding(false);
+        contacts.add("Контактная информация", personalInformationLayout);
+
+        container.add(title, description, contacts);
 
         add(container, editButton);
 

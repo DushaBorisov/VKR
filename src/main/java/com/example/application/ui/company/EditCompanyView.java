@@ -140,6 +140,6 @@ public class EditCompanyView extends VerticalLayout implements HasUrlParameter<L
     }
 
     private void updateCompanyData(Company company){
-        companyService.saveCompany(company);
+        companyService.updateCompany(company);
     }
 }

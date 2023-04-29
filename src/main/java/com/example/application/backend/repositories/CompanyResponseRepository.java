@@ -46,6 +46,13 @@ public class CompanyResponseRepository {
     }
 
     @Transactional
+    public void removeCompanyResponsesByJobId(Long jobId) {
+        entityManager.createQuery("delete  from CompanyResponseModel cr  where cr.job.jobId = :jobId")
+                .setParameter("jobId", jobId)
+                .executeUpdate();
+    }
+
+    @Transactional
     public void addNewCompanyResponse(CompanyResponseModel companyResponseModel) {
         entityManager.persist(companyResponseModel);
     }

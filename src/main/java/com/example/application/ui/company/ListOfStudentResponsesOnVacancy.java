@@ -11,9 +11,11 @@ import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
 import com.example.application.ui.student.StudentInfoPage;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -32,10 +34,13 @@ import java.util.Optional;
 public class ListOfStudentResponsesOnVacancy extends Div implements HasUrlParameter<Long> {
     private final Long companyId;
     private Long jobId;
+    private Label emptyResponses;
 
     private JobService jobService;
     private CompanyService companyService;
     private UserContext userContext;
+
+    private Button moveBackButton;
 
     private StudentResponseService studentResponseService;
 
@@ -55,11 +60,21 @@ public class ListOfStudentResponsesOnVacancy extends Div implements HasUrlParame
         Optional<Company> companyOp = companyService.getCompanyByUserName(username);
         companyId = companyOp.get().getCompanyId();
 
+        VerticalLayout container = new VerticalLayout();
+
+
         addClassName("card-list-view");
         setSizeFull();
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(stResp -> createCard(stResp));
-        add(grid);
+        container.add(grid);
+        moveBackButton = new Button("Назад", e -> getUI().get().navigate(ListOfCompanyVacancies.class));
+        moveBackButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+        emptyResponses = new Label();
+        container.add(emptyResponses);
+        container.add(moveBackButton);
+        add(container);
     }
 
     private HorizontalLayout createCard(StudentResponseModel studentResponse) {
@@ -117,6 +132,8 @@ public class ListOfStudentResponsesOnVacancy extends Div implements HasUrlParame
     public void setParameter(BeforeEvent beforeEvent, Long id) {
         this.jobId = id;
         List<StudentResponseModel> studentResponsesList = studentResponseService.getStudentResponsesByJobId(jobId);
+        if(studentResponsesList.isEmpty())
+            emptyResponses = new Label("Откликов пока нет");
         grid.setItems(studentResponsesList);
     }
 

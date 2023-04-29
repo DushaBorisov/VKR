@@ -27,15 +27,20 @@ public class JobService {
     public List<Job> findByKeyWord(String keyWord) {
         List<Job> jobList = new ArrayList<>();
 
-        try {
-            List<JobElasticDocument> documentsList = jobSearchService.search(keyWord, 0, 100);
-            documentsList.forEach(document -> {
-                Optional<Job> jopOp = jobRepository.getJobById(document.getJobId());
-                jopOp.ifPresent(jobList::add);
-            });
-        } catch (IOException e) {
-            log.error("Unable to execute search job. Reason: {}", e.getCause(), e);
-            return new ArrayList<>();
+        if (keyWord == "") {
+            jobList.addAll(getAllJobs());
+        } else {
+
+            try {
+                List<JobElasticDocument> documentsList = jobSearchService.search(keyWord, 0, 100);
+                documentsList.forEach(document -> {
+                    Optional<Job> jopOp = jobRepository.getJobById(document.getJobId());
+                    jopOp.ifPresent(jobList::add);
+                });
+            } catch (IOException e) {
+                log.error("Unable to execute search job. Reason: {}", e.getCause(), e);
+                return new ArrayList<>();
+            }
         }
         return jobList;
     }

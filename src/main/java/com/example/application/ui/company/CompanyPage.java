@@ -55,7 +55,7 @@ public class CompanyPage extends VerticalLayout {
         description.getStyle().set("white-space", "pre-line");
         description.addClassNames(LumoUtility.Margin.Bottom.SMALL, LumoUtility.Margin.Top.NONE, LumoUtility.TextColor.SECONDARY);
 
-        editButton = new Button("Редактировать данные");
+        editButton = new Button("Редактировать данные", e -> getUI().get().navigate(EditCompanyView.class, company.getCompanyId()));
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
         container.add(title, description);

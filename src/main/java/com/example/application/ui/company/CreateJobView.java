@@ -2,7 +2,9 @@ package com.example.application.ui.company;
 
 import com.example.application.backend.entities.enums.EmploymentEnum;
 import com.example.application.backend.entities.models.Company;
+import com.example.application.backend.entities.models.Job;
 import com.example.application.backend.service.CompanyService;
+import com.example.application.backend.service.JobService;
 import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
@@ -28,8 +30,12 @@ import java.util.Optional;
 @Route(value = "create-job", layout = MainLayout.class)
 public class CreateJobView extends VerticalLayout {
 
+
+
+    private Long companyId;
     private UserContext userContext;
     private CompanyService companyService;
+    private JobService jobService;
 
     private H2 title;
     private TextField jobTitle;
@@ -43,15 +49,17 @@ public class CreateJobView extends VerticalLayout {
 
 
     @Autowired
-    public CreateJobView(UserContext userCont, CompanyService companyService) {
+    public CreateJobView(UserContext userCont, CompanyService companyService, JobService jobServ) {
         this.userContext = userCont;
         this.companyService = companyService;
+        this.jobService = jobServ;
 
         String sessionId = VaadinSession.getCurrent().getSession().getId();
         Optional<UserData> useData = userContext.getAuthenticatedUser(sessionId);
         String username = useData.get().getUserName();
 
         Optional<Company> companyOp = companyService.getCompanyByUserName(username);
+        companyId = companyOp.get().getCompanyId();
         drawCreateJobPage();
 
     }
@@ -110,6 +118,19 @@ public class CreateJobView extends VerticalLayout {
             Notification.show("Необходимо заполнить все поля!");
             return;
         }
+
+        Optional<Company> compOp =  companyService.getCompanyById(companyId);
+
+        Job job = Job.builder()
+                .company(compOp.get())
+                .jobTitle(jobTitle.getValue())
+                .jobDescription(description.getValue())
+                .jobSalary(Integer.valueOf(jobSalary.getValue()))
+                .jobEmployment(jobEmployment.getValue())
+                .jobRequiredExperience(jobExperience.getValue())
+                .build();
+
+        jobService.addNewJob(job);
 
         Notification.show(String.format("Новая вакансия: '%s' добавлена!", jobTitle.getValue()));
         clearAllFields();

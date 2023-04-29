@@ -10,12 +10,15 @@ import com.example.application.backend.service.StudentService;
 import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
+import com.example.application.ui.student.ListOfStudents;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -54,6 +57,7 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
     private Accordion contacts;
 
     private Button responseButton;
+    private Button moveBackButton;
     private Label responseAlreadySend;
     private Label companySendInvitation;
 
@@ -122,9 +126,14 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
         contacts.add("Контактная информация", personalInformationLayout);
 
         container.add(title, salary, requiredExperience, requiredEmployment, descriptionTitle, description, contacts);
-        showResponseButton(container);
 
-        add(container);
+        HorizontalLayout buttonsContainer = new HorizontalLayout();
+        showResponseButton(buttonsContainer);
+        moveBackButton = new Button("Назад", e -> getUI().get().navigate(ListOfJobs.class));
+        moveBackButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        buttonsContainer.add(moveBackButton);
+
+        add(container, buttonsContainer);
     }
 
     private void showError() {
@@ -132,7 +141,7 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
         add(error);
     }
 
-    private void showResponseButton(VerticalLayout container) {
+    private void showResponseButton(HorizontalLayout container) {
         responseButton = new Button("Откликнуться");
 
         responseButton.addClickListener(clickEvent ->

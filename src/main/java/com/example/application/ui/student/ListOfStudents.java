@@ -47,11 +47,13 @@ public class ListOfStudents extends Div implements AfterNavigationObserver {
     @Autowired
     public ListOfStudents(StudentService studentService) {
         this.studentService = studentService;
+        VerticalLayout mainContainer = new VerticalLayout();
 
         addClassName("card-list-view");
         setSizeFull();
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(student -> createCard(student));
+
         add(getToolbar(), grid);
     }
 

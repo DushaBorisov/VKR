@@ -10,7 +10,6 @@ import com.example.application.backend.service.StudentService;
 import com.example.application.security.UserContext;
 import com.example.application.security.UserData;
 import com.example.application.ui.MainLayout;
-import com.example.application.ui.student.ListOfStudents;
 import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -126,6 +125,7 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
         contacts.add("Контактная информация", personalInformationLayout);
 
         container.add(title, salary, requiredExperience, requiredEmployment, descriptionTitle, description, contacts);
+        showLabelResponseAlreadySent(container);
 
         HorizontalLayout buttonsContainer = new HorizontalLayout();
         showResponseButton(buttonsContainer);
@@ -157,20 +157,25 @@ public class JobInfoPage extends VerticalLayout implements HasUrlParameter<Long>
 
             studentResponseService.saveStudentResponseModel(studentResponseModel);
         });
-
-        // get student id
         Optional<StudentResponseModel> studentResponseModelOp = studentResponseService.getStudentResponseModelByJobIdAndStudentId(jobId, studentId);
         // if response already exists deactivate button and write message
-        if (studentResponseModelOp.isPresent()) {
+        if (studentResponseModelOp.isPresent())
             responseButton.setEnabled(false);
-            responseAlreadySend = new Label("Отклик уже отправлен!");
-            responseAlreadySend.addClassNames(LumoUtility.TextColor.SUCCESS);
-            container.add(responseAlreadySend);
-        }
 
         responseButton.setDisableOnClick(true);
         container.add(responseButton);
     }
 
+    private void showLabelResponseAlreadySent(VerticalLayout container) {
+        // get student id
+        Optional<StudentResponseModel> studentResponseModelOp = studentResponseService.getStudentResponseModelByJobIdAndStudentId(jobId, studentId);
+        // if response already exists deactivate button and write message
+        if (studentResponseModelOp.isPresent()) {
+            responseAlreadySend = new Label("Отклик уже отправлен!");
+            responseAlreadySend.addClassNames(LumoUtility.TextColor.SUCCESS);
+            container.add(responseAlreadySend);
+        }
 
+
+    }
 }

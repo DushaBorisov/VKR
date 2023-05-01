@@ -51,7 +51,13 @@ public class JobService {
     }
 
     public List<Job> findByKeyWordsWithFilters(String keyWord, Set<EmploymentEnum> employmentEnum) {
-        List<Job> jobs = findByKeyWord(keyWord);
+        List<Job> jobs = null;
+
+        if (keyWord == "")
+            jobs = getAllJobs();
+        else
+            jobs = findByKeyWord(keyWord);
+
         if (employmentEnum == null || employmentEnum.size() == 0) return jobs;
         Set<String> stringValues = employmentEnum.stream().map(EmploymentEnum::getEmploymentType).collect(Collectors.toSet());
 
@@ -111,4 +117,5 @@ public class JobService {
     public void updateJob(Job job) {
         jobRepository.updateJob(job);
     }
+
 }

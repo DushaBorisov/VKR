@@ -25,6 +25,7 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 
 import javax.annotation.security.PermitAll;
 import java.util.Arrays;
@@ -116,6 +117,8 @@ public class EditJobView extends VerticalLayout implements HasUrlParameter<Long>
         HorizontalLayout buttonsContainer = new HorizontalLayout();
 
         editJobButton = new Button("Обновить вакансию", e -> updateJob(job));
+        moveBackButton = new Button("Назад");
+        moveBackButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         buttonsContainer.add(editJobButton, moveBackButton);
 

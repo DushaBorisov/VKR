@@ -15,6 +15,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -120,6 +121,7 @@ public class ListOfCompanyVacancies extends Div implements AfterNavigationObserv
             jobService.removeJob(job);
             List<Job> jobList = jobService.getAllCompanyJobsByCompanyId(companyId);
             grid.setItems(jobList);
+            Notification.show("Вакансия:" + job.getJobTitle() + " удалена!");
         });
 
         HorizontalLayout buttonsContainer = new HorizontalLayout();

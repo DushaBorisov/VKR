@@ -60,20 +60,22 @@ public class ListOfStudentResponsesOnVacancy extends Div implements HasUrlParame
         Optional<Company> companyOp = companyService.getCompanyByUserName(username);
         companyId = companyOp.get().getCompanyId();
 
-        VerticalLayout container = new VerticalLayout();
 
+        VerticalLayout  container = new VerticalLayout();
+        container.setHeightFull();
 
         addClassName("card-list-view");
-        setSizeFull();
+        //setSizeFull();
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
         grid.addComponentColumn(stResp -> createCard(stResp));
-        container.add(grid);
+        grid.setHeightByRows(true);
+
         moveBackButton = new Button("Назад", e -> getUI().get().navigate(ListOfCompanyVacancies.class));
         moveBackButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-        emptyResponses = new Label();
-        container.add(emptyResponses);
-        container.add(moveBackButton);
+        container.add(grid, moveBackButton);
+//        add(moveBackButton);
+//        add(grid);
         add(container);
     }
 

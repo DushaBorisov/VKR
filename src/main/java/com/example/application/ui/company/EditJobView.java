@@ -117,7 +117,7 @@ public class EditJobView extends VerticalLayout implements HasUrlParameter<Long>
         HorizontalLayout buttonsContainer = new HorizontalLayout();
 
         editJobButton = new Button("Обновить вакансию", e -> updateJob(job));
-        moveBackButton = new Button("Назад");
+        moveBackButton = new Button("Назад", e -> getUI().get().navigate(ListOfJobs.class));
         moveBackButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
         buttonsContainer.add(editJobButton, moveBackButton);

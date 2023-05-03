@@ -102,7 +102,7 @@ public class InvitationsListView extends Div implements AfterNavigationObserver 
         openButton.addClickListener(clickEvent ->
         {
             openButton.getUI().ifPresent(ui ->
-                    ui.navigate(JobInfoPage.class, job.getJobId()));
+                    ui.navigate(JobInfoPageInvitation.class, job.getJobId()));
         });
 
         HorizontalLayout buttonsContainer = new HorizontalLayout();
